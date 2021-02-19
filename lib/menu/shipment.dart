@@ -36,8 +36,8 @@ class _Shipment extends State {
     if (mounted) {
       setState(() {
         listDistance = list;
-        bank = res.destination;
-        home = res.transfer;
+        home = res.destination;
+        bank = res.transfer;
         listDatum = res.data;
         alert = false;
       });
@@ -105,6 +105,11 @@ class _Shipment extends State {
             actions: [
               TextButton(
                   onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('ยกเลิก')),
+              TextButton(
+                  onPressed: () {
                     onSaveDistance(idRes, index: index);
                     Navigator.of(context).pop();
                   },
@@ -112,11 +117,6 @@ class _Shipment extends State {
                     'ยืนยัน',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   )),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('ยกเลิก'))
             ],
           );
         });
@@ -303,6 +303,13 @@ class _Shipment extends State {
             ),
             actions: [
               FlatButton(
+                child: Text('ยกเลิก'),
+                //color: Colors.red,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
                 child: Text(
                   'บันทึก',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -316,13 +323,6 @@ class _Shipment extends State {
                       });
                     }
                   });
-                },
-              ),
-              FlatButton(
-                child: Text('ยกเลิก'),
-                //color: Colors.red,
-                onPressed: () {
-                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -357,24 +357,45 @@ class _Shipment extends State {
               price.isEmpty
                   ? Container()
                   : Container(
-                      height: 35,
-                      width: 45,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        border: Border.all(color: Colors.red),
-                      ),
-                      child: TextButton(
-                        onPressed: () {
-                          alertRemove(index).whenComplete(() => loadDistance());
-                          print('ลบ');
-                        },
-                        child: Text(
-                          'ลบ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.red),
-                        ),
-                      ),
-                    )
+                child: SizedBox(
+                  height: 35,
+                  width: 45,
+                  child: RawMaterialButton(
+                    fillColor: Colors.red[300],
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(10))),
+                    child: const Text('ลบ',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
+                    onPressed: () {
+                      alertRemove(index).whenComplete(() => loadDistance());
+                      print('delete');
+                    },
+                  ),
+                ),
+              )
+              // Container(
+              //         height: 35,
+              //         width: 45,
+              //         decoration: BoxDecoration(
+              //           borderRadius: BorderRadius.all(Radius.circular(5)),
+              //           border: Border.all(color: Colors.red),
+              //         ),
+              //         child: TextButton(
+              //           onPressed: () {
+              //             alertRemove(index).whenComplete(() => loadDistance());
+              //             print('ลบ');
+              //           },
+              //           child: Text(
+              //             'ลบ',
+              //             style: TextStyle(
+              //                 fontWeight: FontWeight.bold, color: Colors.red),
+              //           ),
+              //         ),
+              //       )
             ],
           ),
         ),

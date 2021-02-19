@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:commons/commons.dart';
 import 'package:deltastore/api/toJsonEmployee.dart';
 import 'package:deltastore/field/showMyToast.dart';
 import 'package:deltastore/main_order.dart';
@@ -14,8 +15,9 @@ import 'employee.dart';
 
 class EditEmployee extends StatefulWidget {
   final Employees dataEmployee;
+  final data;
 
-  const EditEmployee({Key key, this.dataEmployee}) : super(key: key);
+  const EditEmployee({Key key, this.dataEmployee, this.data}) : super(key: key);
 
   @override
   _EditEmployeeState createState() => _EditEmployeeState();
@@ -53,6 +55,7 @@ class _EditEmployeeState extends State<EditEmployee> {
     List<int> imageBytes = _filePhoto.readAsBytesSync();
     String fileName = _filePhoto.path.split(".").last;
     base64Image = '$fileName;${base64Encode(imageBytes)}';
+
     print(base64Image);
   }
 
@@ -73,7 +76,6 @@ class _EditEmployeeState extends State<EditEmployee> {
 
   void onSubmit({String idAdmin = '0', String idRes, String photo = ''}) {
     String params;
-
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
 
@@ -113,6 +115,8 @@ class _EditEmployeeState extends State<EditEmployee> {
         if (res.body == '1') {
           showToastBottom(text: 'เพิ่มพนักงานสำเร็จ');
           Navigator.of(context).pop();
+        }else{
+          showToastBottom(text: 'เพิ่มพนักงานไม่สำเร็จ');
         }
       });
       print(params);
@@ -122,6 +126,17 @@ class _EditEmployeeState extends State<EditEmployee> {
   @override
   void initState() {
     // TODO: implement initState
+    if(widget.data != null){
+      idAdmin = widget.data["admin_id"];
+      check = true;
+      checkEmployeeEdit = false;
+      _name.text = widget.data['name'];
+      _username.text = widget.data["username"];
+      //_tel.text = widget.data.tel;
+      _email.text = widget.data['email'];
+      showImage = widget.data['pro_file_url'];
+      print(widget.data['pro_file_url']);
+    }
     if (widget.dataEmployee != null) {
       idAdmin = widget.dataEmployee.adminId;
       check = true;
@@ -139,7 +154,7 @@ class _EditEmployeeState extends State<EditEmployee> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('พนักงาน ${_name.text}'),
+        title: Text('แก้ไขข้อมูล'),
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
         //centerTitle: true,
       ),
@@ -271,6 +286,7 @@ class _EditEmployeeState extends State<EditEmployee> {
                 TextFormField(
                   decoration: InputDecoration(labelText: 'เบอร์โทรศัพท์'),
                   controller: _tel,
+                  keyboardType: TextInputType.number,
                   validator: (input) {
                     if (input.isEmpty) {
                       return 'กรอกเบอร์โทรศัพท์';
@@ -281,6 +297,9 @@ class _EditEmployeeState extends State<EditEmployee> {
                 Container(
                   margin: EdgeInsets.only(top: 30),
                   child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                    ),
                     onPressed: () {
                       onSubmit(
                           idRes: token['data']['id_res_auto'],

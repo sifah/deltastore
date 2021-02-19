@@ -1,4 +1,4 @@
-import 'package:deltastore/main.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -26,9 +26,10 @@ class EditStore extends StatefulWidget {
 
 class _EditStore extends State {
   TextEditingController _phoneNumber = TextEditingController();
-  TextEditingController _nameStore = TextEditingController();
+  TextEditingController _nameStoreTH = TextEditingController();
+  TextEditingController _nameStoreEN = TextEditingController();
   TextEditingController _location = TextEditingController();
-  TextEditingController _email = TextEditingController();
+
 
   final _formkey = GlobalKey<FormState>();
   List<String> _listProvince = new List();
@@ -67,25 +68,17 @@ class _EditStore extends State {
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
     }
+    print('${_location.text}');
   }
 
-  void onLogOut() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) => MyApp()));
-  }
 
-  Future webCall() async {
-    // Showing CircularProgressIndicator using State.
-    setState(() {
-      visible = true;
-    });
-  }
+
 
   void onSave() {}
 
   @override
   void initState() {
-    dropdownProvince = 'กาฬสินธุ์';
+    //dropdownProvince = 'กาฬสินธุ์';
     // TODO: implement initState
     super.initState();
   }
@@ -105,10 +98,6 @@ class _EditStore extends State {
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
         title: Text('แก้ไขข้อมูลร้านค้า'),
         centerTitle: true,
-        actions: [
-          IconButton(
-              icon: Icon(Icons.exit_to_app_outlined), onPressed: onLogOut)
-        ],
       ),
       body: listProvince == null
           ? SpinKitCircle(
@@ -121,47 +110,57 @@ class _EditStore extends State {
                     key: _formkey,
                     child: Column(
                       children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          height: 100,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue
+                          ),
+                        ),
                         TextFormField(
-                          controller: _nameStore,
+                          controller: _nameStoreTH,
                           decoration: InputDecoration(
-                            labelText: 'ชื่อร้าน',
+                            labelText: 'ชื่อร้าน:',
                             labelStyle: TextStyle(color: Colors.black),
+
                           ),
                           validator: (input) =>
                               !input.contains('0') ? 'กรุณากรอกชื่อร้าน' : null,
                           onSaved: (input) =>
-                              _nameStore = input as TextEditingController,
+                              _nameStoreTH = input as TextEditingController,
                         ),
                         TextFormField(
-                          controller: _email,
+                          controller: _nameStoreEN,
                           decoration: InputDecoration(
-                            labelText: 'อีเมล',
+                            labelText: 'Store name: ',
                             labelStyle: TextStyle(color: Colors.black),
                           ),
                           validator: (input) => !input.contains('0')
-                              ? 'กรุณากรอกอีเมลให้ถูกต้อง'
+                              ? 'Please enter your store name.'
                               : null,
                           onSaved: (input) =>
-                              _email = input as TextEditingController,
+                              _nameStoreEN = input as TextEditingController,
                         ),
-                        TextFormField(
-                          controller: _phoneNumber,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: 'เบอร์โทรศัพท์',
-                            labelStyle: TextStyle(color: Colors.black),
-                          ),
-                          validator: (input) => !input.contains('0')
-                              ? 'กรุณากรอกเบอร์โทรศัพท์'
-                              : null,
-                          onSaved: (input) =>
-                              _email = input as TextEditingController,
-                        ),
+                        // TextFormField(
+                        //   controller: _phoneNumber,
+                        //   keyboardType: TextInputType.number,
+                        //   decoration: InputDecoration(
+                        //     labelText: 'เบอร์โทรศัพท์:',
+                        //     labelStyle: TextStyle(color: Colors.black),
+                        //   ),
+                        //   validator: (input) => !input.contains('0')
+                        //       ? 'กรุณากรอกเบอร์โทรศัพท์'
+                        //       : null,
+                        //   onSaved: (input) =>
+                        //       _phoneNumber = input as TextEditingController,
+                        // ),
                         InputDecorator(
                           decoration: InputDecoration(
                             filled: false,
                             hintText: 'เลือกประเภทร้าน',
-                            labelText: 'ประเภทร้าน',
+                            labelText: 'ประเภทร้าน:',
                             //errorText: _errorText,
                           ),
                           isEmpty: dropdownValue == null,
@@ -193,139 +192,148 @@ class _EditStore extends State {
                             ),
                           ),
                         ),
-                        InputDecorator(
-                          decoration: InputDecoration(
-                            filled: false,
-                            hintText: 'เลือกจังหวัด',
-                            labelText: 'จังหวัด',
-                            //errorText: _errorText,
-                          ),
-                          isEmpty: dropdownProvince == null,
-                          child: DropdownButtonHideUnderline(
-                            child: new DropdownButton(
-                              value: dropdownProvince,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                //print('value change');
-                                print(newValue);
-                                setState(() {
-                                  dropdownProvince = newValue;
-                                });
-                              },
-                              items: listProvince.map((value) {
-                                ProvinceDao province = value;
-                                return DropdownMenuItem(
-                                  onTap: () {
-                                    setState(() {
-                                      setState(() {
-                                        loadAmphure(province.id);
-                                      });
-                                    });
-                                  },
-                                  value: province.nameTh,
-                                  child: new Text(province.nameTh),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                        InputDecorator(
-                          decoration: InputDecoration(
-                            filled: false,
-                            hintText: 'เลือกอำเภอ',
-                            labelText: 'อำเภอ',
-                            //errorText: _errorText,
-                          ),
-                          isEmpty: dropdownAmphure == null,
-                          child: DropdownButtonHideUnderline(
-                            child: new DropdownButton(
-                              value: dropdownAmphure,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                //print('value change');
-                                print(newValue);
-                                setState(() {
-                                  dropdownAmphure = newValue;
-                                });
-                              },
-                              items: listAmphure.map((value) {
-                                AmphureDao amphure = value;
-                                return DropdownMenuItem(
-                                  onTap: () {
-                                    setState(() {
-                                      loadDistrict(amphure.id);
-                                      dropdownAmphure = null;
-                                    });
-                                  },
-                                  value: amphure.nameTh,
-                                  child: new Text(amphure.nameTh),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                        InputDecorator(
-                          decoration: InputDecoration(
-                            filled: false,
-                            hintText: 'เลือกตำบล',
-                            labelText: 'ตำบล',
-                            //errorText: _errorText,
-                          ),
-                          isEmpty: dropdownDistrict == null,
-                          child: DropdownButtonHideUnderline(
-                            child: new DropdownButton(
-                              value: dropdownDistrict,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                //print('value change');
-                                print(newValue);
-                                setState(() {
-                                  dropdownDistrict = newValue;
-                                });
-                              },
-                              items: listDistrict.map((value) {
-                                DistrictDao district = value;
-                                return DropdownMenuItem(
-                                  onTap: () {
-                                    setState(() {});
-                                  },
-                                  value: district.nameTh,
-                                  child: new Text(district.nameTh),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
+                        // InputDecorator(
+                        //   decoration: InputDecoration(
+                        //     filled: false,
+                        //     hintText: 'เลือกจังหวัด',
+                        //     labelText: 'จังหวัด:',
+                        //     //errorText: _errorText,
+                        //   ),
+                        //   isEmpty: dropdownProvince == null,
+                        //   child: DropdownButtonHideUnderline(
+                        //     child: new DropdownButton(
+                        //       value: dropdownProvince,
+                        //       isDense: true,
+                        //       onChanged: (newValue) {
+                        //         //print('value change');
+                        //         print(newValue);
+                        //         setState(() {
+                        //           dropdownProvince = newValue;
+                        //         });
+                        //       },
+                        //       items: listProvince.map((value) {
+                        //         ProvinceDao province = value;
+                        //         return DropdownMenuItem(
+                        //           onTap: () {
+                        //             setState(() {
+                        //               setState(() {
+                        //                 loadAmphure(province.id);
+                        //               });
+                        //             });
+                        //           },
+                        //           value: province.nameTh,
+                        //           child: new Text(province.nameTh),
+                        //         );
+                        //       }).toList(),
+                        //     ),
+                        //   ),
+                        // ),
+                        // InputDecorator(
+                        //   decoration: InputDecoration(
+                        //     filled: false,
+                        //     hintText: 'เลือกอำเภอ',
+                        //     labelText: 'อำเภอ:',
+                        //     //errorText: _errorText,
+                        //   ),
+                        //   isEmpty: dropdownAmphure == null,
+                        //   child: DropdownButtonHideUnderline(
+                        //     child: new DropdownButton(
+                        //       value: dropdownAmphure,
+                        //       isDense: true,
+                        //       onChanged: (newValue) {
+                        //         //print('value change');
+                        //         print(newValue);
+                        //         setState(() {
+                        //           dropdownAmphure = newValue;
+                        //         });
+                        //       },
+                        //       items: listAmphure.map((value) {
+                        //         AmphureDao amphure = value;
+                        //         return DropdownMenuItem(
+                        //           onTap: () {
+                        //             setState(() {
+                        //               loadDistrict(amphure.id);
+                        //               dropdownAmphure = null;
+                        //             });
+                        //           },
+                        //           value: amphure.nameTh,
+                        //           child: new Text(amphure.nameTh),
+                        //         );
+                        //       }).toList(),
+                        //     ),
+                        //   ),
+                        // ),
+                        // InputDecorator(
+                        //   decoration: InputDecoration(
+                        //     filled: false,
+                        //     hintText: 'เลือกตำบล',
+                        //     labelText: 'ตำบล:',
+                        //     //errorText: _errorText,
+                        //   ),
+                        //   isEmpty: dropdownDistrict == null,
+                        //   child: DropdownButtonHideUnderline(
+                        //     child: new DropdownButton(
+                        //       value: dropdownDistrict,
+                        //       isDense: true,
+                        //       onChanged: (newValue) {
+                        //         //print('value change');
+                        //         print(newValue);
+                        //         setState(() {
+                        //           dropdownDistrict = newValue;
+                        //         });
+                        //       },
+                        //       items: listDistrict.map((value) {
+                        //         DistrictDao district = value;
+                        //         return DropdownMenuItem(
+                        //           onTap: () {
+                        //             setState(() {});
+                        //           },
+                        //           value: district.nameTh,
+                        //           child: new Text(district.nameTh),
+                        //         );
+                        //       }).toList(),
+                        //     ),
+                        //   ),
+                        // ),
                         TextFormField(
+                          minLines: 1,
+                          maxLines: 5,
                           controller: _location,
-                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                              labelText: 'บ้านเลขที่/หมู่บ้าน',
+                              labelText: 'ที่อยู่ร้าน',
                               labelStyle: TextStyle(color: Colors.black)),
                           validator: (input) =>
                               !input.contains('0') ? 'กรุณากรอกข้อมูล' : null,
                           onSaved: (input) =>
-                              _email = input as TextEditingController,
+                              _location = input as TextEditingController,
                         ),
-                        Visibility(
-                            visible: visible,
-                            child: Container(
-                                margin: EdgeInsets.only(bottom: 30),
-                                child: CircularProgressIndicator())),
+                        // Visibility(
+                        //     visible: visible,
+                        //     child: Container(
+                        //         margin: EdgeInsets.only(bottom: 30),
+                        //         child: CircularProgressIndicator())),
                         Container(
                           margin: EdgeInsets.only(top: 30),
+                          height: 40,
+                          width: MediaQuery.of(context).size.width-20,
                           child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)
+                            ),
                             color: Colors.green,
                             onPressed: onSubmit,
                             child: Text(
                               'บันทึก',
                               style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),
                             ),
                           ),
                         ),
+                        // SpinKitCircle(
+                        //   color: Colors.blue,
+                        // )
                       ],
                     ),
                   )),

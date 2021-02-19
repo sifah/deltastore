@@ -220,6 +220,33 @@ class _PageAddProduct extends State {
             ));
   }
 
+  Future alertRemove(int index) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            title: Text('ยืนยันการลบ'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('ยกเลิก')),
+              TextButton(
+                  onPressed: () {
+                    //onSaveDistance(idRes, index: index);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'ยืนยัน',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+            ],
+          );
+        });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -368,8 +395,8 @@ class _PageAddProduct extends State {
                                                   Container(
                                                     //margin: EdgeInsets.all(10),
                                                     child: SizedBox(
-                                                      height: 25,
-                                                      width: 30,
+                                                      height: 30,
+                                                      width: 40,
                                                       child: RawMaterialButton(
                                                         fillColor:
                                                             Colors.red[300],
@@ -388,6 +415,7 @@ class _PageAddProduct extends State {
                                                                 color: Colors
                                                                     .white)),
                                                         onPressed: () {
+                                                          alertRemove(index);
                                                           print('delete');
                                                         },
                                                       ),

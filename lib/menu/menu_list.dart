@@ -81,7 +81,7 @@ class _MenuListState extends State<MenuList> {
             location(function: onLocation),
             send(function: onShipment),
             credit(function: onBanking),
-            changePassword(function: onChangPass),
+            //changePassword(function: onChangPass),
             employee(function: onEmployee),
             logout(function: onLogout)
           ],

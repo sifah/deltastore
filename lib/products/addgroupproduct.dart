@@ -43,6 +43,34 @@ class _PageAddGroupProduct extends State {
         });
   }
 
+  Future alertRemove(int index) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            title: Text('ยืนยันการลบ'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('ยกเลิก')),
+              TextButton(
+                  onPressed: () {
+                    //onSaveDistance(idRes, index: index);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'ยืนยัน',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -110,7 +138,7 @@ class _PageAddGroupProduct extends State {
                                             _addProduct(
                                                 groupProduct:
                                                     snapshot.data[index]).whenComplete(() => loadGroup());
-                                            print('edit');
+                                            print('edit $index');
                                           },
                                         ),
                                       ),
@@ -130,7 +158,8 @@ class _PageAddGroupProduct extends State {
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white70)),
                                           onPressed: () {
-                                            print('delete');
+                                            alertRemove(index);
+                                            print('delete $index');
                                           },
                                         ),
                                       ),

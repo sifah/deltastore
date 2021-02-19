@@ -94,9 +94,8 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
         future: fetchPhoto,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return SpinKitRing(
-              color: Color.fromRGBO(43, 108, 171, 1),
-              lineWidth: 5,
+            return SpinKitCircle(
+              color: Colors.blue
             );
           }
           return Container(

@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_thailand_provinces/flutter_thailand_provinces.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,10 +14,14 @@ import 'package:flutter/material.dart';
 //String id, code, appBar = '';
 FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
 int current = 0, past = 0;
-DatabaseReference databaseDataPay, databaseOrders;
+DatabaseReference databaseDataPay,
+    databaseOrders,
+    databaseSendRider,
+    databaseNotifyRider;
 String id, code;
 FToast fToast;
 dynamic token;
+
 
 class MyHomeApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -30,6 +35,14 @@ class MyHomeApp extends StatelessWidget {
 
     databaseOrders =
         firebaseDatabase.reference().child('${id}_${code}').child('orders');
+
+    databaseSendRider =
+        firebaseDatabase.reference().child('${id}_${code}').child('delivery');
+
+    databaseNotifyRider = firebaseDatabase
+        .reference()
+        .child('${id}_${code}')
+        .child('add_delivery');
   }
 
   @override

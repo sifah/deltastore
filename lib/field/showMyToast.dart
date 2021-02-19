@@ -23,7 +23,7 @@ showToastBottom(
       positionedToastBuilder: (context, child) {
         return Positioned(
           child: child,
-          bottom: 70,
+          bottom: 80,
           left: 24,
           right: 24,
         );

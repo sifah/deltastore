@@ -84,10 +84,10 @@ class _ChangeLocationState extends State<ChangeLocation> {
         // This marker id can be anything that uniquely identifies each marker.
         markerId: MarkerId(_listLocation.toString()),
         position: _lastMapPosition,
-        // infoWindow: InfoWindow(
-        //   title: 'Really cool place',
-        //   snippet: '5 Star Rating',
-        // ),
+        infoWindow: InfoWindow(
+          title: 'Really cool place',
+          snippet: '5 Star Rating',
+        ),
         icon: _markerIcon,
       ));
     });
@@ -163,10 +163,9 @@ class _ChangeLocationState extends State<ChangeLocation> {
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
         centerTitle: true,
       ),
-      body: _listLocation == null
-          ? SpinKitRing(
-              color: Color.fromRGBO(43, 108, 171, 1),
-              lineWidth: 5,
+      body: _listLocation == null && currentPosition == null
+          ? SpinKitCircle(
+              color: Colors.blue
             )
           : Stack(
               children: [

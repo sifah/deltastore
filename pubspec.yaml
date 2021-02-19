@@ -42,8 +42,8 @@ dependencies:
   validators: ^2.0.0
   share: ^0.6.2+3
   http:
-  flutter_launcher_icons: ^0.8.0
   smart_select: ^4.3.2
+  flutter_local_notifications: ^4.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -53,6 +53,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: ^0.8.0
 
 flutter_icons:
   android: true
@@ -64,6 +66,7 @@ flutter_application_id:
   android:
     id: "co.deltafood.rider"
     name: "Delta Store"
+#เปลี่ยนเป็น store
   ios:
     id: "co.deltafood.rider"
     name: "Delta Store"

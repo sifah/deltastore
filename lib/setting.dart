@@ -1,7 +1,9 @@
+import 'package:deltastore/api/api.dart';
 import 'package:deltastore/config.dart';
-import 'package:deltastore/editdata.dart';
+import 'package:deltastore/menu/edit_employee.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'main_order.dart';
 import 'menu/menu_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -12,6 +14,8 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> {
+
+
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
@@ -58,7 +62,7 @@ Container userProfile() {
                 Container(
                     padding: EdgeInsets.only(top: 18, left: 10),
                     child: DefaultTextStyle(
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -77,10 +81,11 @@ Container userProfile() {
                                 margin: EdgeInsets.only(top: 5),
                                 child: FlatButton(
                                     onPressed: () {
+                                      print(token);
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (BuildContext context) =>
-                                                  EditData()));
+                                                  EditEmployee(data: token['data'],)));
                                       print('แก้ไขข้อมูล');
                                     },
                                     color: Colors.blueAccent,
@@ -94,13 +99,13 @@ Container userProfile() {
                                         Icon(
                                           Icons.edit,
                                           size: 14,
-                                          color: Colors.white70,
+                                          color: Colors.white,
                                         ),
                                         Text(
                                           'แก้ไขข้อมูล',
                                           style: TextStyle(
                                               fontSize: 14,
-                                              color: Colors.white70),
+                                              color: Colors.white),
                                         )
                                       ],
                                     )))

@@ -15,12 +15,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'html.dart';
+
 // เหลือยืนยันอาหารเสร็จแล้ว >> ส่งไปให้rider
 List<Reason> listReason;
 String changeOut;
 
 class DetailOrder extends StatefulWidget {
-  Orders data;
+  final Orders data;
 
   DetailOrder(this.data);
 
@@ -39,7 +40,7 @@ class _DetailOrder extends State<DetailOrder> {
 
   void confirmOrders(String orderID, String adminID) {
     String params =
-        jsonEncode(<String, String>{'order_id': orderID, 'admin_id': adminID});
+    jsonEncode(<String, String>{'order_id': orderID, 'admin_id': adminID});
     http.post('${Config.API_URL}confirm_order', body: params).then((res) {
       print(res.body);
       if (res.body == '1') {
@@ -47,7 +48,9 @@ class _DetailOrder extends State<DetailOrder> {
             .reference()
             .child("$orderID")
             .set(numRandom.nextInt(100));
-
+        databaseDataPay.set(numRandom.nextInt(100));
+        databaseSendRider.set(numRandom.nextInt(100));
+        databaseNotifyRider.set("$orderID");
         Fluttertoast.showToast(
             msg: 'ยืนยันแล้ว',
             textColor: Colors.white,
@@ -61,7 +64,8 @@ class _DetailOrder extends State<DetailOrder> {
     return showDialog(
         context: context,
         //barrierDismissible: false,
-        builder: (BuildContext context) => AlertDialog(
+        builder: (BuildContext context) =>
+            AlertDialog(
               title: new Text(
                 'ยืนยันออเดอร์',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -95,7 +99,8 @@ class _DetailOrder extends State<DetailOrder> {
     return showDialog(
         context: context,
         //barrierDismissible: false,
-        builder: (BuildContext context) => AlertDialog(
+        builder: (BuildContext context) =>
+            AlertDialog(
               contentPadding: EdgeInsets.zero,
               title: new Text(
                 'ยืนยันยกเลิกออเดอร์',
@@ -137,7 +142,8 @@ class _DetailOrder extends State<DetailOrder> {
               child: Container(
                 // height: double.maxFinite,
                 // width: double.maxFinite,
-                color: Colors.blueGrey[50],
+                //color: Colors.blueGrey[50],
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -156,7 +162,7 @@ class _DetailOrder extends State<DetailOrder> {
                                 CircleAvatar(
                                   radius: 25,
                                   backgroundImage:
-                                      NetworkImage(data.member.picUrl),
+                                  NetworkImage(data.member.picUrl),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(left: 10),
@@ -180,33 +186,34 @@ class _DetailOrder extends State<DetailOrder> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Flexible(
-                                    //alignment: Alignment.centerLeft,
+                                  //alignment: Alignment.centerLeft,
                                     child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'จัดส่ง: ${data.address.distance}'
-                                      '  ${data.address.duration}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                      maxLines: 1,
-                                    ),
-                                    data.comment == null
-                                        ? Padding(padding: EdgeInsets.zero)
-                                        : Text(
-                                            '${data.comment}',
-                                            maxLines: 1,
-                                          ),
-                                    Text(
-                                      '${data.address.address}',
-                                      //maxLines: 2,
-                                      overflow: click == 1
-                                          ? null
-                                          : TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                )),
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Text(
+                                          'จัดส่ง: ${data.address.distance}'
+                                              '  ${data.address.duration}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                          maxLines: 1,
+                                        ),
+                                        data.comment == null
+                                            ? Padding(padding: EdgeInsets.zero)
+                                            : Text(
+                                          '${data.comment}',
+                                          maxLines: 1,
+                                        ),
+                                        Text(
+                                          '${data.address.address}',
+                                          //maxLines: 2,
+                                          overflow: click == 1
+                                              ? null
+                                              : TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    )),
                                 InkWell(
                                   onTap: () {
                                     if (count == 0) {
@@ -247,9 +254,9 @@ class _DetailOrder extends State<DetailOrder> {
                                   height: 25,
                                   decoration: BoxDecoration(
                                       borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
+                                      BorderRadius.all(Radius.circular(5)),
                                       color: data.memberGiveaway == '0'
-                                          ? Colors.grey
+                                          ? Colors.blueGrey
                                           : Colors.green[400]),
                                   child: Text(
                                     data.memberGiveaway == '0'
@@ -284,14 +291,14 @@ class _DetailOrder extends State<DetailOrder> {
                                   height: 25,
                                   decoration: BoxDecoration(
                                       borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                      color: data.status == '2'
-                                          ? Colors.green[400]
-                                          : Colors.red[400]),
+                                      BorderRadius.all(Radius.circular(5)),
+                                      color: data.status == '3'
+                                          ? Colors.blueGrey
+                                          : Colors.green[400]),
                                   child: Text(
-                                    data.status == '2'
-                                        ? 'ยืนยันแล้ว'
-                                        : 'ยังไม่ยืนยัน',
+                                    data.status == '3'
+                                        ? 'ยังไม่ยืนยัน'
+                                        : 'ยืนยันแล้ว',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
@@ -312,7 +319,7 @@ class _DetailOrder extends State<DetailOrder> {
                               width: double.maxFinite,
                               decoration: BoxDecoration(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                   color: data.paymentType == '0'
                                       ? Colors.red[400]
                                       : Colors.green[400]),
@@ -339,18 +346,25 @@ class _DetailOrder extends State<DetailOrder> {
                             Container(
                               margin: EdgeInsets.only(top: 10),
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                                color: Colors.blue[300],
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.blue[300],
+                                  boxShadow: [BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 3,
+                                    offset: Offset(0, 3),
+                                  )
+                                  ]
                               ),
                               child: Container(
-                                  //color: Colors.green[300],
+                                //color: Colors.green[300],
                                   alignment: Alignment.center,
                                   //padding: EdgeInsets.all(10),
                                   child: Column(
                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Container(
@@ -360,7 +374,7 @@ class _DetailOrder extends State<DetailOrder> {
                                         //color: Colors.white24,
                                         child: ListView.builder(
                                             physics:
-                                                NeverScrollableScrollPhysics(),
+                                            NeverScrollableScrollPhysics(),
                                             itemCount: item.length,
                                             shrinkWrap: true,
                                             itemBuilder:
@@ -374,57 +388,62 @@ class _DetailOrder extends State<DetailOrder> {
                                                     fontFamily: 'Kanit',
                                                     fontSize: 16,
                                                     fontWeight:
-                                                        FontWeight.w400),
+                                                    FontWeight.w400),
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                       children: [
                                                         Flexible(
                                                             fit: FlexFit.tight,
                                                             child: Text(
-                                                              '[${dataItem.count}]   ${dataItem.name.th}',
+                                                              '[${dataItem
+                                                                  .count}]   ${dataItem
+                                                                  .name.th}',
                                                               overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                              TextOverflow
+                                                                  .ellipsis,
                                                             )),
                                                         Text(
-                                                            '${dataItem.price} บาท '),
+                                                            '${dataItem
+                                                                .price} บาท '),
                                                       ],
                                                     ),
                                                     Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 30),
+                                                      //padding: EdgeInsets.only(left: 30),
                                                       child: Column(
                                                         children: [
                                                           Container(
                                                             child: Column(),
                                                           ),
+                                                          dataItem.html.isEmpty
+                                                              ? Padding(
+                                                            padding:
+                                                            EdgeInsets
+                                                                .zero,
+                                                          )
+                                                              : HtmlDetail(
+                                                              dataItem),
                                                           Container(
+                                                            padding: EdgeInsets
+                                                                .only(left: 30),
                                                             child: Row(
                                                               children: [
                                                                 _comment.isEmpty
                                                                     ? Padding(
-                                                                        padding:
-                                                                            EdgeInsets
-                                                                                .zero)
+                                                                    padding:
+                                                                    EdgeInsets
+                                                                        .zero)
                                                                     : Text(
-                                                                        '- ${dataItem.comments}'),
+                                                                    '- ${dataItem
+                                                                        .comments}'),
                                                               ],
                                                             ),
                                                           ),
-                                                          dataItem.html.isEmpty
-                                                              ? Padding(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                )
-                                                              : HtmlDetail(
-                                                                  dataItem)
                                                         ],
                                                       ),
                                                     ),
@@ -451,34 +470,35 @@ class _DetailOrder extends State<DetailOrder> {
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.only(
                                                   bottomRight:
-                                                      Radius.circular(10),
+                                                  Radius.circular(10),
                                                   bottomLeft:
-                                                      Radius.circular(10)),
-                                              color: Color.fromRGBO(
-                                                  255, 255, 255, 0.9),
+                                                  Radius.circular(10)),
+                                              color: Colors.blue[50],
                                             ),
                                             child: Column(
                                               children: [
                                                 Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     children: [
                                                       Text('ค่าอาหารรวม :  '),
                                                       Text(
-                                                          '${data.priceFood} บาท '),
+                                                          '${data
+                                                              .priceFood} บาท '),
                                                     ]),
                                                 SizedBox(
                                                   height: 5,
                                                 ),
                                                 Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     children: [
                                                       Text('ค่าจัดส่ง :  '),
                                                       Text(
-                                                          '${data.priceSend} บาท ')
+                                                          '${data
+                                                              .priceSend} บาท ')
                                                     ]),
                                                 Expanded(
                                                     flex: 0,
@@ -488,8 +508,8 @@ class _DetailOrder extends State<DetailOrder> {
                                                     )),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
                                                     Text('ราคารวม :  '),
                                                     Text(
@@ -522,71 +542,91 @@ class _DetailOrder extends State<DetailOrder> {
           //margin: EdgeInsets.all(10),
           child: data.status == '2'
               ? Container(
-                  color: Colors.green,
+            color: Colors.green,
+            child: TextButton(
+              child: Text(
+                'เสร็จแล้ว',
+                style: TextStyle(
+                    fontFamily: 'Kanit',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onPressed: () {
+                print('ทำอาหารเสร็จแล้ว');
+              },
+            ),
+          )
+              : data.status == '3'
+              ? Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 150,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Colors.green),
                   child: TextButton(
                     child: Text(
-                      'เสร็จแล้ว',
+                      'ยืนยัน',
                       style: TextStyle(
-                          fontFamily: 'Kanit',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      _alertConfirm(data.orderId);
+                      print("ยืนยันรับงาน");
+                    },
+                  ),
+                ),
+                Container(
+                  width: 150,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Colors.red[500]),
+                  child: TextButton(
+                    child: Text(
+                      'ปฏิเสธ',
+                      style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     onPressed: () {
-                      print('ทำอาหารเสร็จแล้ว');
+                      _alertCanCle(data.orderId).then((value) {
+                        if (changeOut == '1') {
+                          Navigator.pop(context);
+                        }
+                      });
+                      print('ไม่รับงาน');
                     },
                   ),
                 )
-              : Container(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 150,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.green),
-                        child: TextButton(
-                          child: Text(
-                            'ยืนยัน',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          onPressed: () async {
-                            _alertConfirm(data.orderId);
-                            print("ยืนยันรับงาน");
-                          },
-                        ),
-                      ),
-                      Container(
-                        width: 150,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.red[500]),
-                        child: TextButton(
-                          child: Text(
-                            'ปฏิเสธ',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          onPressed: () {
-                            _alertCanCle(data.orderId).then((value) {
-                              if (changeOut == '1') {
-                                Navigator.pop(context);
-                              }
-                            });
-                            print('ไม่รับงาน');
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+              ],
+            ),
+          )
+              : data.status == '4'
+              ? Container(
+            color: Colors.green,
+            child: TextButton(
+              child: Text(
+                'กำลังจัดส่ง',
+                style: TextStyle(
+                    fontFamily: 'Kanit',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onPressed: () {
+                print('กำลังจัดส่ง');
+              },
+            ),
+          )
+              : Padding(padding: EdgeInsets.zero)
+          ,
         ),
       ),
     );

@@ -137,77 +137,82 @@ class _BankMenu extends State {
                                           children: [
                                             Container(
                                               margin: EdgeInsets.only(right: 5),
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors.amber,
-                                                      width: 2),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10))),
                                               child: SizedBox(
-                                                height: 30,
-                                                width: 50,
+                                                height: 35,
+                                                width: 60,
                                                 child: RawMaterialButton(
-                                                  //fillColor: Colors.amber,
+                                                  fillColor: Colors.amber,
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                      Radius.circular(15),
-                                                    ),
-                                                  ),
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(10))),
                                                   child: const Text(
                                                     'แก้ไข',
                                                     style: TextStyle(
                                                         fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.amber),
+                                                        fontWeight: FontWeight.bold),
                                                   ),
                                                   onPressed: () {
                                                     _editBanking(
-                                                            payments: snapshot
-                                                                .data[index])
-                                                        .whenComplete(() =>
-                                                            loadPayment());
-                                                    print('edit');
+                                                        payments: snapshot.data[index]).whenComplete(() => loadPayment());
                                                   },
                                                 ),
                                               ),
                                             ),
                                             Container(
-                                              margin: EdgeInsets.only(right: 5),
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors.red,
-                                                      width: 2),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10))),
                                               child: SizedBox(
-                                                height: 30,
-                                                width: 35,
+                                                height: 35,
+                                                width: 45,
                                                 child: RawMaterialButton(
-                                                  //fillColor: Colors.amber,
+                                                  fillColor: Colors.red[300],
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                      Radius.circular(15),
-                                                    ),
-                                                  ),
-                                                  child: const Text(
-                                                    'ลบ',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.red),
-                                                  ),
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(10))),
+                                                  child: const Text('ลบ',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.white)),
                                                   onPressed: () {
+                                                    //alertRemove(index).whenComplete(() => loadDistance());
                                                     print('delete');
                                                   },
                                                 ),
                                               ),
-                                            ),
+                                            )
+                                            // Container(
+                                            //   margin: EdgeInsets.only(right: 5),
+                                            //   decoration: BoxDecoration(
+                                            //       border: Border.all(
+                                            //           color: Colors.red,
+                                            //           width: 2),
+                                            //       borderRadius:
+                                            //           BorderRadius.all(
+                                            //               Radius.circular(10))),
+                                            //   child: SizedBox(
+                                            //     height: 30,
+                                            //     width: 35,
+                                            //     child: RawMaterialButton(
+                                            //       //fillColor: Colors.amber,
+                                            //       shape: RoundedRectangleBorder(
+                                            //         borderRadius:
+                                            //             BorderRadius.all(
+                                            //           Radius.circular(15),
+                                            //         ),
+                                            //       ),
+                                            //       child: const Text(
+                                            //         'ลบ',
+                                            //         style: TextStyle(
+                                            //             fontSize: 16,
+                                            //             fontWeight:
+                                            //                 FontWeight.bold,
+                                            //             color: Colors.red),
+                                            //       ),
+                                            //       onPressed: () {
+                                            //         print('delete');
+                                            //       },
+                                            //     ),
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                       ],

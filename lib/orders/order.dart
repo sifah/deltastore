@@ -1,13 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:deltastore/api/order_api.dart';
 import 'package:deltastore/orders/detailOrder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../api/toJsonOrder.dart';
 import '../main_order.dart';
 
 dynamic token;
+FlutterLocalNotificationsPlugin flutterNotification =
+    FlutterLocalNotificationsPlugin();
+int current = 0, past = 0;
 
 class Order extends StatefulWidget {
   @override
@@ -15,13 +21,50 @@ class Order extends StatefulWidget {
 }
 
 class _OrderState extends State<Order> {
+  // sendNotification(title, body) async {
+  //   final Int64List vibrationPattern = new Int64List(4);
+  //   vibrationPattern[0] = 0;
+  //   vibrationPattern[1] = 1000;
+  //   vibrationPattern[2] = 500;
+  //   vibrationPattern[3] = 2000;
+  //   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  //     '1000',
+  //     'FLUTTER_NOTIFICATION_CHANNEL',
+  //     'FLUTTER_NOTIFICATION_CHANNEL_DETAIL',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //     vibrationPattern: vibrationPattern,
+  //   );
+  //   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  //   var platformChannelSpecifics = NotificationDetails(
+  //       android: androidPlatformChannelSpecifics,
+  //       iOS: iOSPlatformChannelSpecifics);
+  // }
+  //
+  // String channelId = "1000";
+  // String channelName = "FLUTTER_NOTIFICATION_CHANNEL";
+  // String channelDescription = "FLUTTER_NOTIFICATION_CHANNEL_DETAIL";
+  //
+  // String _status;
+
   @override
   void initState() {
+    // TODO: implement initState
     databaseDataPay =
         firebaseDatabase.reference().child('${id}_${code}').child('data_pay');
 
     databaseOrders =
         firebaseDatabase.reference().child('${id}_${code}').child('orders');
+
+    // flutterNotification.initialize(
+    //     initializationSettings, onSelectNotification: (payload) {
+    //   print("onSelectNotification called.");
+    //   setState(() {
+    //     message = payload;
+    //   });
+    //   return;
+    // });
+
     super.initState();
   }
 
@@ -30,12 +73,14 @@ class _OrderState extends State<Order> {
     // TODO: implement didChangeDependencies
     MyHomeApp().setFirebase();
     databaseDataPay.onValue.listen((event) {
-      print(event.snapshot.value);
+      //sendNotification("title", "body");
+      print('pay  ${event.snapshot.value}');
     });
-    databaseOrders.onValue.listen((event) {
-      print(event.snapshot.key);
-      print(event.snapshot.value);
-    });
+    // databaseOrders.onValue.listen((event) {
+    //   print(event.snapshot.key);
+    //   print(event.snapshot.value);
+    // });
+    // databaseSendRider.onValue.listen((event) { print(event.snapshot.value);});
     super.didChangeDependencies();
   }
 
@@ -51,11 +96,25 @@ class _OrderState extends State<Order> {
           stream: databaseDataPay.onValue.asyncExpand((event) => getOrders()),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              if (current == past) {
+                current = snapshot.data.length;
+              } else {
+                past = current;
+              }
+              if (past == 0 && snapshot.data.length > 0) {
+                past = snapshot.data.length;
+              }
               return ListView.builder(
                   itemCount: snapshot.data.length,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, index) {
                     Orders orders = snapshot.data[index];
+                    // _status = orders.status;
+                    // if (past < current) {
+                    //   sendNotification('ออเดอรใหม่',
+                    //       'จาก ${orders.member.picUrl} ${orders.orderId} ราคา ${orders.sumPrice}');
+                    //   past = current;
+                    // }
                     return Container(
                       child: Container(
                         margin: EdgeInsets.only(top: 5),
@@ -177,17 +236,17 @@ class _OrderState extends State<Order> {
                                         decoration: BoxDecoration(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(5)),
-                                            color: orders.status == '2'
-                                                ? Colors.green[400]
-                                                : Colors.blueGrey),
+                                            color: orders.status == '3'
+                                                ? Colors.blueGrey
+                                                : Colors.green[400]),
                                         child: FlatButton(
                                           onPressed: () {
-                                            print('ยืนยันแล้ว');
+                                            print('ยังไม่ยืนยัน');
                                           },
                                           child: Text(
-                                            orders.status == '2'
-                                                ? 'ยืนยันแล้ว'
-                                                : 'ยังไม่ยืนยัน',
+                                            orders.status == '3'
+                                                ? 'ยังไม่ยืนยัน'
+                                                : 'ยืนยันแล้ว',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold),

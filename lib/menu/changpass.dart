@@ -28,10 +28,7 @@ class _ChangPass extends State {
     }
   }
 
-  void onLogOut() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) => MyApp()));
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +36,6 @@ class _ChangPass extends State {
       appBar: AppBar(
         title: Text('เปลี่ยนรหัสผ่าน'),
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.exit_to_app_outlined), onPressed: onLogOut)
-        ],
       ),
       body: SingleChildScrollView(
         child: Container(
