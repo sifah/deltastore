@@ -163,7 +163,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
         centerTitle: true,
       ),
-      body: _listLocation == null && currentPosition == null
+      body: _listLocation == null || currentPosition == null
           ? SpinKitCircle(
               color: Colors.blue
             )

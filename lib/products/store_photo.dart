@@ -60,7 +60,7 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
   @override
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
-   // print(deviceWidth);
+    // print(deviceWidth);
     return Scaffold(
       // backgroundColor: Colors.blue,
       appBar: AppBar(
@@ -93,27 +93,25 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
       body: FutureBuilder(
         future: fetchPhoto,
         builder: (context, snapshot) {
+          print(snapshot.hasData);
           if (!snapshot.hasData) {
-            return SpinKitCircle(
-              color: Colors.blue
-            );
+            return SpinKitCircle(color: Colors.blue);
           }
-          return Container(
-              margin: EdgeInsets.all(10),
-              child: GridView.builder(
-                itemCount: snapshot.data.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: (deviceWidth < 400)
-                        ? 3
-                        : (deviceWidth < 800)
+          return GridView.builder(
+            padding: EdgeInsets.only(top: 5),
+            itemCount: snapshot.data.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: (deviceWidth < 400)
+                    ? 3
+                    : (deviceWidth < 800)
                         ? 6
                         : 9,
-                    crossAxisSpacing: 5.0,
-                    mainAxisSpacing: 5.0),
-                itemBuilder: (BuildContext context, int index) {
-                  return framePhoto(snapshot.data[index]);
-                },
-              ));
+                crossAxisSpacing: 5.0,
+                mainAxisSpacing: 5.0),
+            itemBuilder: (BuildContext context, int index) {
+              return framePhoto(snapshot.data[index]);
+            },
+          );
         },
       ),
       // persistentFooterButtons: [
@@ -139,42 +137,54 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
   }
 
   Widget framePhoto(StorePhoto storePhoto) {
-    return InkWell(
-      child: Card(
-        color: Colors.black.withOpacity(0.05),
-        child: Container(
-          padding: EdgeInsets.all(2),
-          child: Stack(
-            //mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(storePhoto.name),
-                  fit: BoxFit.fill
-                )
-              ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        boxShadow: [
+          BoxShadow(color: Colors.black26,blurRadius: 2,spreadRadius: -0.1)
+        ]
+      ),
+      child: InkWell(
+        child: Card(
+          clipBehavior: Clip.antiAlias,
+          // elevation: 5,
+          color: Color.fromRGBO(43, 108, 171, 1),
+          child: Container(
+            padding: EdgeInsets.all(2),
+            child: Stack(
+              //mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(storePhoto.name),
+                          fit: BoxFit.fill)),
                   // alignment: Alignment.center,
                   margin: EdgeInsets.only(bottom: 20),
                   // child: Image.network(
                   //   images[index],
                   //   fit: BoxFit.fill,
                   // )
-        ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  child: Text('${storePhoto.title}'),
                 ),
-              )
-            ],
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 5, right: 5),
+                    child: Text('${storePhoto.title}',
+                        style: TextStyle(color: Colors.white),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
+        onLongPress: () {
+          alertDelete();
+          print('delete');
+        },
       ),
-      onLongPress: () {
-        alertDelete();
-        print('delete');
-      },
     );
   }
 }

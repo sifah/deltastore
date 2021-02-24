@@ -23,7 +23,7 @@ class StorePhoto {
     id: json["id"],
     title: json["title"],
     name: json["name"],
-    date: DateTime.parse(json["d"]),
+    date: DateTime.parse(json["date"]),
     creatBy: json["creat_by"],
   );
 
