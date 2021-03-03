@@ -179,7 +179,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                     )),
-                                                Text('${_endPrice.sum} บาท '),
+                                                Text('${_endPrice.sum.split('.').first} บาท '),
                                               ],
                                             ),
                                           ),
