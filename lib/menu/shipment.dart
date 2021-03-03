@@ -216,7 +216,7 @@ class _Shipment extends State {
             );
           }
 
-          return SpinKitCircle(
+          return SpinKitFadingCircle(
             color: Colors.blue,
           );
         },

@@ -59,16 +59,16 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path_ios: "assets/images/icond.png"
-  image_path_android: "assets/images/icond.png"
+  image_path_ios: "assets/images/login_logo.png"
+  image_path_android: "assets/images/login_logo.png"
 
 flutter_application_id:
   android:
-    id: "co.deltafood.rider"
+    id: "co.deltafood.deltashop"
     name: "Delta Store"
 #เปลี่ยนเป็น store
   ios:
-    id: "co.deltafood.rider"
+    id: "co.deltafood.deltashop"
     name: "Delta Store"
 
 # For information on the generic Dart part of this file, see the

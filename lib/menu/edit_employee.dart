@@ -13,6 +13,8 @@ import 'package:http/http.dart' as http;
 import '../config.dart';
 import 'employee.dart';
 
+
+
 class EditEmployee extends StatefulWidget {
   final Employees dataEmployee;
   final data;
@@ -294,42 +296,33 @@ class _EditEmployeeState extends State<EditEmployee> {
                     return null;
                   },
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)
-                    ),
-                    onPressed: () {
-                      onSubmit(
-                          idRes: token['data']['id_res_auto'],
-                          idAdmin: idAdmin,
-                          photo: base64Image);
-                    },
-                    color: Colors.green,
-                    child: Text(
-                      'บันทึก',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
+
               ],
             ),
           ),
         ),
       ),
 
-      // bottomNavigationBar: Container(
-      //   color: Colors.green,
-      //   child: TextButton(
-      //     child: Text(
-      //       'บันทึก',
-      //       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      //     ),
-      //     onPressed: onSubmit,
-      //   ),
-      // ),
+        bottomNavigationBar: ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: [
+            RaisedButton(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              color: Colors.green,
+              onPressed: (){
+                print('บันทึกข้อมูล');
+              },
+              child: Text('บันทึก',style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+              ),),
+            ),
+          ],
+        )
     );
   }
 }

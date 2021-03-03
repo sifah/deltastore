@@ -172,7 +172,7 @@ class _PageAddGroupProduct extends State {
                         );
                       });
                 }
-                return SpinKitCircle(
+                return SpinKitFadingCircle(
                   color: Colors.blue,
                 );
               })),

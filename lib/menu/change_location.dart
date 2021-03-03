@@ -164,7 +164,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
         centerTitle: true,
       ),
       body: _listLocation == null || currentPosition == null
-          ? SpinKitCircle(
+          ? SpinKitFadingCircle(
               color: Colors.blue
             )
           : Stack(

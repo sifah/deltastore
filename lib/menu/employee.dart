@@ -57,7 +57,7 @@ class _EmployeeState extends State<Employee> {
           future: listEmployee,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return SpinKitCircle(
+              return SpinKitFadingCircle(
                 color: Colors.blue,
               );
             }
@@ -77,8 +77,7 @@ class _EmployeeState extends State<Employee> {
                       elevation: 5,
                       color: index.isEven
                           ? Colors.white
-                          : Color.alphaBlend(
-                              Colors.black.withOpacity(0.1), Colors.white),
+                          : Colors.blueGrey[50],
                       child: Column(
                         children: [
                           ListTile(

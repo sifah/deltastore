@@ -70,7 +70,7 @@ class _BankMenu extends State {
           future: listPayment,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return SpinKitCircle(
+              return SpinKitFadingCircle(
                 color: Colors.blue,
               );
             }

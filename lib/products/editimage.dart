@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class EditImage extends StatefulWidget {
   final Product product;
 
-  EditImage(this.product);
+  const EditImage({Key key, this.product}) : super(key: key);
 
   @override
   _EditImageState createState() => _EditImageState();
@@ -19,6 +19,17 @@ class _EditImageState extends State<EditImage> {
   TextEditingController price = TextEditingController();
   TextEditingController description = TextEditingController();
 
+  String _photoUrl;
+
+  void refresh() async {
+    setState(() {
+      if (photoUrl != null) {
+        _photoUrl = photoUrl;
+      }
+    });
+    print('1');
+  }
+
   // Product product;
   //
   // _EditImageState(this.product);
@@ -26,15 +37,21 @@ class _EditImageState extends State<EditImage> {
   @override
   void initState() {
     // TODO: implement initState
-    nameProduct.text = widget.product.name;
-    //type.text = widget.product.type;
-    price.text = widget.product.price;
-    description.text = widget.product.detail;
+    if (widget.product != null) {
+      nameProduct.text = widget.product.name;
+      //type.text = widget.product.type;
+      price.text = widget.product.price;
+      description.text = widget.product.detail;
+      _photoUrl = widget.product.picUrl;
+      //
+    }
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    // print(_photoUrl);
     return Scaffold(
         appBar: AppBar(
           title: Text('แก้ไขสินค้า'),
@@ -60,10 +77,14 @@ class _EditImageState extends State<EditImage> {
                             borderRadius: BorderRadiusDirectional.circular(10)),
                         //color: Colors.grey[300],
                         clipBehavior: Clip.antiAlias,
-                        child: Image.network(
-                          widget.product.picUrl,
-                          fit: BoxFit.cover,
-                        ),
+                        child: _photoUrl == null
+                            ? Center(
+                                child: Text('กรุณาเพิ่มรูปภาพ'),
+                              )
+                            : Image.network(
+                                _photoUrl,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                     ),
                     FractionalTranslation(
@@ -73,7 +94,9 @@ class _EditImageState extends State<EditImage> {
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    StorePhotoPage()));
+                                    StorePhotoPage(
+                                      function: refresh,
+                                    )));
                             print('แก้ไขรูปภาพ');
                           },
                           icon: Icon(
@@ -100,8 +123,8 @@ class _EditImageState extends State<EditImage> {
                       children: [
                         Text('ชื่อสินค้า :'),
                         TextField(
-                          decoration: InputDecoration(
-                              hintText: '${widget.product.name}'),
+                          // decoration: InputDecoration(
+                          //     hintText: '${widget.product.name}'),
                           controller: nameProduct,
                         ),
                         Text('กลุ่มสินค้า :'),
@@ -116,32 +139,19 @@ class _EditImageState extends State<EditImage> {
                         ),
                         Text('ราคา :'),
                         TextField(
-                          decoration: InputDecoration(
-                              hintText: '${widget.product.price} บาท'),
+                          // decoration: InputDecoration(
+                          //     hintText: '${widget.product.price} บาท'),
                           controller: price,
                         ),
                         Text('รายละเอียด :'),
                         TextField(
                           minLines: 1,
                           maxLines: 10,
-                          decoration: InputDecoration(
-                            hintText: '${widget.product.detail}',
-                          ),
+                          // decoration: InputDecoration(
+                          //   hintText: '${widget.product.detail}',
+                          // ),
                           controller: description,
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: ButtonBar(
-                            alignment: MainAxisAlignment.center,
-                            children: [
-                              RaisedButton(
-                                color: Colors.green,
-                                child: Text('บันทึก'),
-                                onPressed: (){},
-                              ),
-                            ],
-                          ),
-                        )
                       ],
                     ),
                   ),
@@ -150,6 +160,27 @@ class _EditImageState extends State<EditImage> {
             ),
           ),
         ),
+        bottomNavigationBar: ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: [
+            RaisedButton(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              color: Colors.green,
+              onPressed: () {
+                print('บันทึกข้อมูล');
+              },
+              child: Text(
+                'บันทึก',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+            ),
+          ],
+        )
         // bottomNavigationBar: Container(
         //   height: 55,
         //   color: Colors.green,
@@ -166,6 +197,6 @@ class _EditImageState extends State<EditImage> {
         //     ),
         //   ),
         // )
-    );
+        );
   }
 }

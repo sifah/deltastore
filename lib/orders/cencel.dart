@@ -38,7 +38,7 @@ class _CancelBodyState extends State<CancelBody> {
   void _handleRadioValueChanged(value) {
     setState(() {
       _reasonID = value;
-      print('ok ${_reasonID}');
+      print('ok ${_reasonID.toString()}');
     });
   }
 

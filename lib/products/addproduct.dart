@@ -1,6 +1,5 @@
 import 'package:deltastore/api/api.dart';
 import 'package:deltastore/api/product.dart';
-import 'package:deltastore/products/addimageproduct.dart';
 import 'package:deltastore/products/editimage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +11,7 @@ class PageAddProduct extends StatefulWidget {
 }
 
 class _PageAddProduct extends State {
+
   Future<void> _alertPic(Product product) async {
     return showDialog(
         context: context,
@@ -213,7 +213,7 @@ class _PageAddProduct extends State {
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              EditImage(product)));
+                              EditImage(product: product)));
                     },
                     child: Text('แก้ไข'))
               ],
@@ -430,14 +430,14 @@ class _PageAddProduct extends State {
                             ));
                       });
                 }
-                return SpinKitCircle(
+                return SpinKitFadingCircle(
                   color: Colors.blue,
                 );
               })),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (BuildContext context) => AddImage()));
+              MaterialPageRoute(builder: (BuildContext context) => EditImage()));
         },
         child: Icon(Icons.add),
       ),

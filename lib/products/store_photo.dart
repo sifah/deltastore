@@ -1,11 +1,21 @@
+import 'dart:convert';
+
 import 'package:deltastore/api/api_data.dart';
 import 'package:deltastore/api/toJsonPicture.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+import 'editimage.dart';
+
+String photoUrl;
 
 class StorePhotoPage extends StatefulWidget {
+  final Function function ;
+
+  const StorePhotoPage({Key key, this.function}) : super(key: key);
   @override
   _StorePhotoPageState createState() => _StorePhotoPageState();
 }
@@ -13,6 +23,10 @@ class StorePhotoPage extends StatefulWidget {
 class _StorePhotoPageState extends State<StorePhotoPage> {
   Future fetchPhoto;
   List list;
+  File _file ;
+  String base64;
+
+
 
   void loadPicture() async {
     Future res = fetchAllPicture();
@@ -21,8 +35,24 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
     });
   }
 
-  void selectPhoto() {
-    var file = ImagePicker().getImage(source: ImageSource.gallery);
+  void selectPhoto() async {
+    var file = await ImagePicker().getImage(source: ImageSource.gallery);
+    setState(() {
+      _file = File(file.path);
+    });
+    uploadPhoto();
+  }
+
+
+  void uploadPhoto() {
+    if (_file == null) return;
+    List<int> photoBytes = _file.readAsBytesSync();
+    String photoType = _file.path.split(".").last;
+    base64 = '$photoType;${base64Encode(photoBytes)}';
+
+    print(base64);
+    // กดแล้วให้ส่งไป api 
+
   }
 
   Future alertDelete() {
@@ -95,7 +125,7 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
         builder: (context, snapshot) {
           print(snapshot.hasData);
           if (!snapshot.hasData) {
-            return SpinKitCircle(color: Colors.blue);
+            return SpinKitFadingCircle(color: Colors.blue);
           }
           return GridView.builder(
             padding: EdgeInsets.only(top: 5),
@@ -158,7 +188,7 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(storePhoto.name),
-                          fit: BoxFit.fill)),
+                          fit: BoxFit.cover)),
                   // alignment: Alignment.center,
                   margin: EdgeInsets.only(bottom: 20),
                   // child: Image.network(
@@ -180,6 +210,16 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
             ),
           ),
         ),
+        onTap: (){
+          setState(() {
+            photoUrl = storePhoto.name;
+          });
+          // Navigator.pop(context);
+          widget.function();
+          Navigator.pop(context);
+
+          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditImage(photoUrl: storePhoto.name,)));
+        },
         onLongPress: () {
           alertDelete();
           print('delete');

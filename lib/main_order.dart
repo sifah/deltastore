@@ -71,7 +71,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  final List<Widget> _children = [Order(), Product(), History(), Setting()];
+  final List<Widget> _children = [Order(), Product(), HistoryPage(), Setting()];
 
   void loadProvince() async {
     await ThailandProvincesDatabase.init();

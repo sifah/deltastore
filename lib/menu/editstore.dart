@@ -406,24 +406,6 @@ class _EditStore extends State {
                         //     child: Container(
                         //         margin: EdgeInsets.only(bottom: 30),
                         //         child: CircularProgressIndicator())),
-                        Container(
-                          margin: EdgeInsets.only(top: 30),
-                          height: 40,
-                          width: MediaQuery.of(context).size.width - 20,
-                          child: RaisedButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            color: Colors.green,
-                            onPressed: onSubmit,
-                            child: Text(
-                              'บันทึก',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        ),
                         // SpinKitCircle(
                         //   color: Colors.blue,
                         // )
@@ -443,6 +425,26 @@ class _EditStore extends State {
       //     ),
       //   ),
       // ),
+        bottomNavigationBar: ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: [
+            RaisedButton(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              color: Colors.green,
+              onPressed: (){
+                print('บันทึกข้อมูล');
+              },
+              child: Text('บันทึก',style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+              ),),
+            ),
+          ],
+        )
     );
   }
 }

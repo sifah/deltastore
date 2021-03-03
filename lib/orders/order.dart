@@ -12,8 +12,9 @@ import '../main_order.dart';
 
 dynamic token;
 FlutterLocalNotificationsPlugin flutterNotification =
-    FlutterLocalNotificationsPlugin();
-int current = 0, past = 0;
+FlutterLocalNotificationsPlugin();
+int current = 0,
+    past = 0;
 
 class Order extends StatefulWidget {
   @override
@@ -119,7 +120,7 @@ class _OrderState extends State<Order> {
                       child: Container(
                         margin: EdgeInsets.only(top: 5),
                         decoration: BoxDecoration(
-                            // borderRadius: BorderRadius.circular(20),
+                          // borderRadius: BorderRadius.circular(20),
                             shape: BoxShape.rectangle,
                             boxShadow: [
                               BoxShadow(
@@ -144,7 +145,7 @@ class _OrderState extends State<Order> {
                                 ListTile(
                                   title: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Container(
                                         child: Row(
@@ -160,13 +161,13 @@ class _OrderState extends State<Order> {
                                             ),
                                             Container(
                                               padding:
-                                                  EdgeInsets.only(left: 20),
+                                              EdgeInsets.only(left: 20),
                                               child: Text(
                                                 '${orders.sumPrice} บาท ',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight:
-                                                        FontWeight.bold),
+                                                    FontWeight.bold),
                                               ),
                                             ),
                                           ],
@@ -174,7 +175,7 @@ class _OrderState extends State<Order> {
                                       ),
                                       Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                        CrossAxisAlignment.end,
                                         children: [
                                           Text(
                                             'เมื่อ: ${orders.timeStart}',
@@ -183,7 +184,8 @@ class _OrderState extends State<Order> {
                                                 fontWeight: FontWeight.w600),
                                           ),
                                           Text(
-                                            'ระยะทาง : ${orders.address.distance}',
+                                            'ระยะทาง : ${orders.address
+                                                .distance}',
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600),
@@ -199,60 +201,104 @@ class _OrderState extends State<Order> {
                                       top: 15, left: 10, right: 10, bottom: 10),
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Flexible(
                                           child: Column(
-                                        crossAxisAlignment:
+                                            crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: [
-                                          orders.comment == null
-                                              ? Padding(
+                                            children: [
+                                              orders.comment == null
+                                                  ? Padding(
                                                   padding: EdgeInsets.zero)
-                                              : Text(
-                                                  '${orders.comment}',
-                                                  style:
-                                                      TextStyle(fontSize: 16),
+                                                  : Text(
+                                                '${orders.comment}',
+                                                style:
+                                                TextStyle(fontSize: 16),
+                                                maxLines: 1,
+                                                overflow:
+                                                TextOverflow.ellipsis,
+                                                softWrap: false,
+                                              ),
+                                              Text(
+                                                  'ที่อยู่: ${orders.address
+                                                      .address}',
                                                   maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                  overflow: TextOverflow
+                                                      .ellipsis,
                                                   softWrap: false,
-                                                ),
-                                          Text(
-                                              'ที่อยู่: ${orders.address.address}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              softWrap: false,
-                                              style: TextStyle(
-                                                color: Colors.black
-                                                    .withOpacity(0.6),
-                                              )),
-                                        ],
-                                      )),
-                                      Container(
-                                        //margin: EdgeInsets.only(top: 15,bottom: 15),
-                                        margin: EdgeInsets.only(top: 10),
-                                        height: 25,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(5)),
-                                            color: orders.status == '3'
-                                                ? Colors.blueGrey
-                                                : Colors.green[400]),
-                                        child: FlatButton(
-                                          onPressed: () {
-                                            print('ยังไม่ยืนยัน');
-                                          },
-                                          child: Text(
-                                            orders.status == '3'
-                                                ? 'ยังไม่ยืนยัน'
-                                                : 'ยืนยันแล้ว',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      )
+                                                  style: TextStyle(
+                                                    color: Colors.black
+                                                        .withOpacity(0.6),
+                                                  )),
+                                            ],
+                                          )),
+                                      orders.status == '2'
+                                          ? statusOrder(Text('ยืนยันแล้ว',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),),
+                                          Colors.green)
+                                          : orders.status == '3'
+                                          ? statusOrder(
+                                          Text('ยังไม่ยืนยัน', style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white)),
+                                          Colors.blueGrey)
+                                          : orders.status == '4' 
+                                          ? statusOrder(
+                                          Text('กำลังจัดส่ง', style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white)),
+                                          Colors.green) 
+                                          : Padding(padding: EdgeInsets.zero)
+                                      // Container(
+                                      //   //margin: EdgeInsets.only(top: 15,bottom: 15),
+                                      //   margin: EdgeInsets.only(top: 10),
+                                      //   height: 25,
+                                      //   decoration: BoxDecoration(
+                                      //       borderRadius: BorderRadius.all(
+                                      //           Radius.circular(5)),
+                                      //       color: orders.status == '3'
+                                      //           ? Colors.blueGrey
+                                      //           : Colors.green[400]),
+                                      //   child: orders.status == '3'
+                                      //       ? FlatButton(
+                                      //           onPressed: () {
+                                      //             print('ยังไม่ยืนยัน');
+                                      //           },
+                                      //           child: Text(
+                                      //             orders.status == '3'
+                                      //                 ? 'ยังไม่ยืนยัน'
+                                      //                 : 'ยืนยันแล้ว',
+                                      //             style: TextStyle(
+                                      //                 color: Colors.white,
+                                      //                 fontWeight:
+                                      //                     FontWeight.bold),
+                                      //           ),
+                                      //         )
+                                      //       : orders.status == '4'
+                                      //           ? FlatButton(
+                                      //               shape:
+                                      //                   RoundedRectangleBorder(
+                                      //                       borderRadius:
+                                      //                           BorderRadius
+                                      //                               .circular(
+                                      //                                   5)),
+                                      //               onPressed: () {
+                                      //                 print('กำลังจัดส่ง');
+                                      //               },
+                                      //               child: Text('กำลังจัดส่ง',
+                                      //                   style: TextStyle(
+                                      //                       color: Colors.white,
+                                      //                       fontWeight:
+                                      //                           FontWeight
+                                      //                               .bold)),
+                                      //               color: Colors.green,
+                                      //             )
+                                      //           : Padding(
+                                      //               padding: EdgeInsets.zero),
+                                      // )
                                     ],
                                   ),
                                 )
@@ -264,10 +310,21 @@ class _OrderState extends State<Order> {
                     );
                   });
             }
-            return SpinKitCircle(
+            return SpinKitFadingCircle(
               color: Colors.blue,
             );
           },
         ));
+  }
+
+  Widget statusOrder(Text text, Color color) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: color
+      ),
+      child: text,
+    );
   }
 }
