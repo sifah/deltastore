@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:commons/commons.dart';
-import 'package:deltastore/api/group_product.dart';
+import 'package:deltastore/api/toJsonGroup_product.dart';
 import 'package:deltastore/products/addgroupproduct.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +66,7 @@ class _EditBodyState extends State<EditBody> {
 
   @override
   Widget build(BuildContext context) {
-    print(selectValue);
+    // print(selectValue);
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -96,9 +96,7 @@ class _EditBodyState extends State<EditBody> {
                           margin: EdgeInsets.only(right: 10),
                           child: Text('สถานะ')),
                       DropdownButton(
-                        hint: widget.groupProduct != null
-                            ? Text(_listStatus.elementAt(indexStatus))
-                            : Text('เลือกสถานะ'),
+                        hint:  Text('เลือกสถานะ'),
                         value: dropDownValue,
                         items: _listStatus.map((value) {
                           return DropdownMenuItem(

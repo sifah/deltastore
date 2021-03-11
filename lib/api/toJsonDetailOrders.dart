@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final detailOrders = detailOrdersFromJson(jsonString);
+
 import 'dart:convert';
 
 DetailOrders detailOrdersFromJson(String str) => DetailOrders.fromJson(json.decode(str));
@@ -48,6 +52,7 @@ class DetailOrders {
     this.bgId,
     this.location,
     this.member,
+    this.orderSlip,
     this.items,
   });
 
@@ -93,6 +98,7 @@ class DetailOrders {
   String bgId;
   Location location;
   Member member;
+  List<OrderSlip> orderSlip;
   List<Item> items;
 
   factory DetailOrders.fromJson(Map<String, dynamic> json) => DetailOrders(
@@ -138,6 +144,7 @@ class DetailOrders {
     bgId: json["bg_id"],
     location: Location.fromJson(json["location"]),
     member: Member.fromJson(json["member"]),
+    orderSlip: List<OrderSlip>.from(json["order_slip"].map((x) => OrderSlip.fromJson(x))),
     items: List<Item>.from(json["items"].map((x) => Item.fromJson(x))),
   );
 
@@ -184,6 +191,7 @@ class DetailOrders {
     "bg_id": bgId,
     "location": location.toJson(),
     "member": member.toJson(),
+    "order_slip": List<dynamic>.from(orderSlip.map((x) => x.toJson())),
     "items": List<dynamic>.from(items.map((x) => x.toJson())),
   };
 }
@@ -233,8 +241,8 @@ class Item {
   String fId;
   String price;
   String totalPrice;
-  List<ItemDetail> details;
-  List<Topping> toppings;
+  List<dynamic> details;
+  List<dynamic> toppings;
   String count;
   String status;
   String okId;
@@ -248,8 +256,8 @@ class Item {
     fId: json["f_id"],
     price: json["price"],
     totalPrice: json["total_price"],
-    details: List<ItemDetail>.from(json["details"].map((x) => ItemDetail.fromJson(x))),
-    toppings: List<Topping>.from(json["toppings"].map((x) => Topping.fromJson(x))),
+    details: List<dynamic>.from(json["details"].map((x) => x)),
+    toppings: List<dynamic>.from(json["toppings"].map((x) => x)),
     count: json["count"],
     status: json["status"],
     okId: json["ok_id"],
@@ -264,8 +272,8 @@ class Item {
     "f_id": fId,
     "price": price,
     "total_price": totalPrice,
-    "details": List<dynamic>.from(details.map((x) => x.toJson())),
-    "toppings": List<dynamic>.from(toppings.map((x) => x.toJson())),
+    "details": List<dynamic>.from(details.map((x) => x)),
+    "toppings": List<dynamic>.from(toppings.map((x) => x)),
     "count": count,
     "status": status,
     "ok_id": okId,
@@ -273,142 +281,6 @@ class Item {
     "name": name.toJson(),
     "comments": comments,
     "html": html,
-  };
-}
-
-class ItemDetail {
-  ItemDetail({
-    this.groupId,
-    this.name,
-    this.detail,
-    this.numberMin,
-    this.numberMax,
-    this.sub,
-    this.hashKey,
-  });
-
-  int groupId;
-  List<NameElement> name;
-  List<NameElement> detail;
-  int numberMin;
-  int numberMax;
-  List<Sub> sub;
-  String hashKey;
-
-  factory ItemDetail.fromJson(Map<String, dynamic> json) => ItemDetail(
-    groupId: json["group_id"],
-    name: List<NameElement>.from(json["name"].map((x) => NameElement.fromJson(x))),
-    detail: List<NameElement>.from(json["detail"].map((x) => NameElement.fromJson(x))),
-    numberMin: json["number_min"],
-    numberMax: json["number_max"],
-    sub: List<Sub>.from(json["sub"].map((x) => Sub.fromJson(x))),
-    hashKey: json["\u0024\u0024hashKey"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "group_id": groupId,
-    "name": List<dynamic>.from(name.map((x) => x.toJson())),
-    "detail": List<dynamic>.from(detail.map((x) => x.toJson())),
-    "number_min": numberMin,
-    "number_max": numberMax,
-    "sub": List<dynamic>.from(sub.map((x) => x.toJson())),
-    "\u0024\u0024hashKey": hashKey,
-  };
-}
-
-class NameElement {
-  NameElement({
-    this.shot,
-    this.title,
-    this.longText,
-    this.hashKey,
-  });
-
-  Shot shot;
-  String title;
-  LongText longText;
-  String hashKey;
-
-  factory NameElement.fromJson(Map<String, dynamic> json) => NameElement(
-    shot: shotValues.map[json["shot"]],
-    title: json["title"],
-    longText: longTextValues.map[json["long_text"]],
-    hashKey: json["\u0024\u0024hashKey"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "shot": shotValues.reverse[shot],
-    "title": title,
-    "long_text": longTextValues.reverse[longText],
-    "\u0024\u0024hashKey": hashKey,
-  };
-}
-
-enum LongText { EMPTY, ENGLISH, LONG_TEXT }
-
-final longTextValues = EnumValues({
-  "ภาษาไทย": LongText.EMPTY,
-  "English": LongText.ENGLISH,
-  "ພາສາລາວ": LongText.LONG_TEXT
-});
-
-enum Shot { TH, EN, LA }
-
-final shotValues = EnumValues({
-  "en": Shot.EN,
-  "la": Shot.LA,
-  "th": Shot.TH
-});
-
-class Sub {
-  Sub({
-    this.price,
-    this.name,
-    this.sort,
-    this.id,
-    this.showDetail,
-    this.detail,
-    this.stock,
-    this.defaultVal,
-    this.hashKey,
-    this.selected,
-  });
-
-  int price;
-  List<NameElement> name;
-  int sort;
-  int id;
-  bool showDetail;
-  List<NameElement> detail;
-  List<dynamic> stock;
-  bool defaultVal;
-  String hashKey;
-  bool selected;
-
-  factory Sub.fromJson(Map<String, dynamic> json) => Sub(
-    price: json["price"],
-    name: List<NameElement>.from(json["name"].map((x) => NameElement.fromJson(x))),
-    sort: json["sort"],
-    id: json["id"],
-    showDetail: json["show_detail"],
-    detail: List<NameElement>.from(json["detail"].map((x) => NameElement.fromJson(x))),
-    stock: List<dynamic>.from(json["stock"].map((x) => x)),
-    defaultVal: json["default_val"],
-    hashKey: json["\u0024\u0024hashKey"],
-    selected: json["selected"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "price": price,
-    "name": List<dynamic>.from(name.map((x) => x.toJson())),
-    "sort": sort,
-    "id": id,
-    "show_detail": showDetail,
-    "detail": List<dynamic>.from(detail.map((x) => x.toJson())),
-    "stock": List<dynamic>.from(stock.map((x) => x)),
-    "default_val": defaultVal,
-    "\u0024\u0024hashKey": hashKey,
-    "selected": selected,
   };
 }
 
@@ -433,30 +305,6 @@ class Name {
     "th": th,
     "en": en,
     "la": la,
-  };
-}
-
-class Topping {
-  Topping({
-    this.tpsId,
-    this.price,
-    this.count,
-  });
-
-  String tpsId;
-  String price;
-  int count;
-
-  factory Topping.fromJson(Map<String, dynamic> json) => Topping(
-    tpsId: json["tps_id"],
-    price: json["price"],
-    count: json["count"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "tps_id": tpsId,
-    "price": price,
-    "count": count,
   };
 }
 
@@ -508,16 +356,34 @@ class Member {
   };
 }
 
-class EnumValues<T> {
-  Map<String, T> map;
-  Map<T, String> reverseMap;
+class OrderSlip {
+  OrderSlip({
+    this.idSlip,
+    this.idPayType,
+    this.imgUrl,
+    this.amount,
+    this.success,
+  });
 
-  EnumValues(this.map);
+  String idSlip;
+  String idPayType;
+  String imgUrl;
+  String amount;
+  String success;
 
-  Map<T, String> get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
-    return reverseMap;
-  }
+  factory OrderSlip.fromJson(Map<String, dynamic> json) => OrderSlip(
+    idSlip: json["id_slip"],
+    idPayType: json["id_pay_type"],
+    imgUrl: json["img_url"],
+    amount: json["amount"],
+    success: json["success"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id_slip": idSlip,
+    "id_pay_type": idPayType,
+    "img_url": imgUrl,
+    "amount": amount,
+    "success": success,
+  };
 }

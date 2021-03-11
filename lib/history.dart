@@ -30,7 +30,7 @@ class _HistoryPageState extends State<HistoryPage> {
         context: context,
         initialDate: _dateTime,
         firstDate: DateTime(_dateTime.year - 10),
-        lastDate: DateTime(_dateTime.year + 5));
+        lastDate: DateTime(_dateTime.year +5 ));
 
     if (picked != null && picked != _dateTime) {
       //print('วันที่ : ${_dateTime.toString()}');
@@ -122,16 +122,17 @@ class _HistoryPageState extends State<HistoryPage> {
                             onTap: () async {
                               selectDate(context);
                             },
-                            child: Row(
-                              children: [
-                                Text(dateFormat.format(_dateTime)),
-                                Icon(
-                                  Icons.date_range_sharp,
-                                  color: Colors.blue,
-                                )
-                              ],
-                            ),
-                          ))
+
+                                child: Row(
+                                  children: [
+                                    Text(dateFormat.format(_dateTime)),
+                                    Icon(
+                                      Icons.date_range_sharp,
+                                      color: Colors.blue,
+                                    )
+                                  ],
+                                ),
+                              ))
                         ],
                       ),
                       Container(
@@ -144,7 +145,7 @@ class _HistoryPageState extends State<HistoryPage> {
               )),
         ),
       ),
-      body: listHistory == null || listHistory.isEmpty
+      body: listHistory == null
           ? SpinKitFadingCircle(
               color: Colors.blue,
             )
@@ -180,7 +181,6 @@ class _HistoryPageState extends State<HistoryPage> {
                                     builder: (BuildContext context) =>
                                         HistoryDetail(
                                           orderID: history,
-                                          orderResID: history,
                                         )));
                           },
                           child: Card(

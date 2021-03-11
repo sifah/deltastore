@@ -1,10 +1,15 @@
 
-import 'package:deltastore/api/api.dart';
-import 'package:deltastore/api/group_product.dart';
+import 'dart:convert';
 
+import 'package:deltastore/api/api.dart';
+import 'package:deltastore/api/toJsonGroup_product.dart';
+import 'package:deltastore/field/showMyToast.dart';
+import 'package:http/http.dart'as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import '../config.dart';
+import '../main_order.dart';
 import 'edit_store_body.dart';
 
 class PageAddGroupProduct extends StatefulWidget {
@@ -43,7 +48,7 @@ class _PageAddGroupProduct extends State {
         });
   }
 
-  Future alertRemove(int index) {
+  Future alertRemove(String foodGroup) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -59,8 +64,7 @@ class _PageAddGroupProduct extends State {
                   child: Text('ยกเลิก')),
               TextButton(
                   onPressed: () {
-                    //onSaveDistance(idRes, index: index);
-                    Navigator.of(context).pop();
+                    onRemove(foodGroup, context);
                   },
                   child: Text(
                     'ยืนยัน',
@@ -69,6 +73,25 @@ class _PageAddGroupProduct extends State {
             ],
           );
         });
+  }
+
+  void onRemove(String groupId,BuildContext context) {
+    String param = jsonEncode(<String, String>{
+      'fg_id': groupId,
+      'id_res_auto': token['data']['id_res_auto']
+    });
+    print(param);
+    http.post('${Config.API_URL}delete_group', body: param).then((res) {
+      print(res.body);
+      if(res.body == '1'){
+        Navigator.pop(context);
+        showToastBottom(text: 'ลบสินค้าสำเร็จ');
+        print('success');
+      }else{
+        showToastBottom(text: 'ลบไม่สำเร็จ');
+        print('fail');
+      }
+    });
   }
 
   @override
@@ -84,6 +107,7 @@ class _PageAddGroupProduct extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        margin: EdgeInsets.only(bottom: 30),
           child: FutureBuilder(
               future: group,
               builder: (context, snapshot) {
@@ -138,6 +162,7 @@ class _PageAddGroupProduct extends State {
                                             _addProduct(
                                                 groupProduct:
                                                     snapshot.data[index]).whenComplete(() => loadGroup());
+
                                             print('edit $index');
                                           },
                                         ),
@@ -158,8 +183,7 @@ class _PageAddGroupProduct extends State {
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white70)),
                                           onPressed: () {
-                                            alertRemove(index);
-                                            print('delete $index');
+                                            alertRemove(groupProduct.fgId).whenComplete(() => loadGroup());
                                           },
                                         ),
                                       ),
@@ -179,6 +203,7 @@ class _PageAddGroupProduct extends State {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           _addProduct().whenComplete(() => loadGroup());
+          showToastBottom(text: 'บันทึกสำเร็จ');
         },
         child: Icon(Icons.add),
       ),

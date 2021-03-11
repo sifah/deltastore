@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:deltastore/api/order_api.dart';
+import 'package:deltastore/notification.dart';
 import 'package:deltastore/orders/detailOrder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,61 +12,37 @@ import '../api/toJsonOrder.dart';
 import '../main_order.dart';
 
 dynamic token;
-FlutterLocalNotificationsPlugin flutterNotification =
-FlutterLocalNotificationsPlugin();
-int current = 0,
-    past = 0;
 
+// int current = 0,
+//     past = 0;
+int checkLoad = 1;
 class Order extends StatefulWidget {
   @override
   _OrderState createState() => _OrderState();
 }
 
 class _OrderState extends State<Order> {
-  // sendNotification(title, body) async {
-  //   final Int64List vibrationPattern = new Int64List(4);
-  //   vibrationPattern[0] = 0;
-  //   vibrationPattern[1] = 1000;
-  //   vibrationPattern[2] = 500;
-  //   vibrationPattern[3] = 2000;
-  //   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-  //     '1000',
-  //     'FLUTTER_NOTIFICATION_CHANNEL',
-  //     'FLUTTER_NOTIFICATION_CHANNEL_DETAIL',
-  //     importance: Importance.max,
-  //     priority: Priority.high,
-  //     vibrationPattern: vibrationPattern,
-  //   );
-  //   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-  //   var platformChannelSpecifics = NotificationDetails(
-  //       android: androidPlatformChannelSpecifics,
-  //       iOS: iOSPlatformChannelSpecifics);
+
+  List _loadOrder;
+
+  // void loadOrder(Orders orders) async{
+  //   final load = await fetchOrders();
+  //   setState(() {
+  //     _loadOrder = load;
+  //     if (orders.status == '1' ){
+  //       showNotification('อัพเดตออร์เดอร์!', 'มีรายการออร์เดอร์มาใหม่');
+  //     }
+  //     print(load);
+  //   });
   // }
-  //
-  // String channelId = "1000";
-  // String channelName = "FLUTTER_NOTIFICATION_CHANNEL";
-  // String channelDescription = "FLUTTER_NOTIFICATION_CHANNEL_DETAIL";
-  //
-  // String _status;
 
   @override
   void initState() {
     // TODO: implement initState
     databaseDataPay =
         firebaseDatabase.reference().child('${id}_${code}').child('data_pay');
-
     databaseOrders =
         firebaseDatabase.reference().child('${id}_${code}').child('orders');
-
-    // flutterNotification.initialize(
-    //     initializationSettings, onSelectNotification: (payload) {
-    //   print("onSelectNotification called.");
-    //   setState(() {
-    //     message = payload;
-    //   });
-    //   return;
-    // });
-
     super.initState();
   }
 
@@ -74,14 +51,8 @@ class _OrderState extends State<Order> {
     // TODO: implement didChangeDependencies
     MyHomeApp().setFirebase();
     databaseDataPay.onValue.listen((event) {
-      //sendNotification("title", "body");
       print('pay  ${event.snapshot.value}');
     });
-    // databaseOrders.onValue.listen((event) {
-    //   print(event.snapshot.key);
-    //   print(event.snapshot.value);
-    // });
-    // databaseSendRider.onValue.listen((event) { print(event.snapshot.value);});
     super.didChangeDependencies();
   }
 
@@ -96,26 +67,18 @@ class _OrderState extends State<Order> {
         body: StreamBuilder(
           stream: databaseDataPay.onValue.asyncExpand((event) => getOrders()),
           builder: (context, snapshot) {
+            // print(snapshot.error);
+            // print(snapshot.data);
             if (snapshot.hasData) {
-              if (current == past) {
-                current = snapshot.data.length;
-              } else {
-                past = current;
-              }
-              if (past == 0 && snapshot.data.length > 0) {
-                past = snapshot.data.length;
-              }
+              // showNotification('อัพเดตออร์เดอร์!', 'มีรายการออร์เดอร์มาใหม่');
               return ListView.builder(
                   itemCount: snapshot.data.length,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, index) {
                     Orders orders = snapshot.data[index];
-                    // _status = orders.status;
-                    // if (past < current) {
-                    //   sendNotification('ออเดอรใหม่',
-                    //       'จาก ${orders.member.picUrl} ${orders.orderId} ราคา ${orders.sumPrice}');
-                    //   past = current;
-                    // }
+                    if( orders.status == '3'){
+                      showNotification('อัพเดตออร์เดอร์!', 'มีรายการออร์เดอร์มาใหม่');
+                    }
                     return Container(
                       child: Container(
                         margin: EdgeInsets.only(top: 5),
@@ -134,7 +97,7 @@ class _OrderState extends State<Order> {
                                 context,
                                 new CupertinoPageRoute(
                                     builder: (BuildContext context) =>
-                                        DetailOrder(snapshot.data[index])));
+                                        DetailOrder(orders)));
                             print(orders.orderId);
                           },
                           child: Card(
@@ -252,53 +215,6 @@ class _OrderState extends State<Order> {
                                               color: Colors.white)),
                                           Colors.green) 
                                           : Padding(padding: EdgeInsets.zero)
-                                      // Container(
-                                      //   //margin: EdgeInsets.only(top: 15,bottom: 15),
-                                      //   margin: EdgeInsets.only(top: 10),
-                                      //   height: 25,
-                                      //   decoration: BoxDecoration(
-                                      //       borderRadius: BorderRadius.all(
-                                      //           Radius.circular(5)),
-                                      //       color: orders.status == '3'
-                                      //           ? Colors.blueGrey
-                                      //           : Colors.green[400]),
-                                      //   child: orders.status == '3'
-                                      //       ? FlatButton(
-                                      //           onPressed: () {
-                                      //             print('ยังไม่ยืนยัน');
-                                      //           },
-                                      //           child: Text(
-                                      //             orders.status == '3'
-                                      //                 ? 'ยังไม่ยืนยัน'
-                                      //                 : 'ยืนยันแล้ว',
-                                      //             style: TextStyle(
-                                      //                 color: Colors.white,
-                                      //                 fontWeight:
-                                      //                     FontWeight.bold),
-                                      //           ),
-                                      //         )
-                                      //       : orders.status == '4'
-                                      //           ? FlatButton(
-                                      //               shape:
-                                      //                   RoundedRectangleBorder(
-                                      //                       borderRadius:
-                                      //                           BorderRadius
-                                      //                               .circular(
-                                      //                                   5)),
-                                      //               onPressed: () {
-                                      //                 print('กำลังจัดส่ง');
-                                      //               },
-                                      //               child: Text('กำลังจัดส่ง',
-                                      //                   style: TextStyle(
-                                      //                       color: Colors.white,
-                                      //                       fontWeight:
-                                      //                           FontWeight
-                                      //                               .bold)),
-                                      //               color: Colors.green,
-                                      //             )
-                                      //           : Padding(
-                                      //               padding: EdgeInsets.zero),
-                                      // )
                                     ],
                                   ),
                                 )

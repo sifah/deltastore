@@ -28,7 +28,7 @@ class Orders {
   String orderId;
   String memberId;
   String timeStart;
-  String comment;
+  dynamic comment;
   String status;
   String paymentType;
   String sumPrice;
@@ -47,7 +47,7 @@ class Orders {
     orderId: json["order_id"],
     memberId: json["member_id"],
     timeStart: json["time_start"],
-    comment: json["comment"] == null ? null : json["comment"],
+    comment: json["comment"],
     status: json["status"],
     paymentType: json["payment_type"],
     sumPrice: json["sum_price"],
@@ -67,7 +67,7 @@ class Orders {
     "order_id": orderId,
     "member_id": memberId,
     "time_start": timeStart,
-    "comment": comment == null ? null : comment,
+    "comment": comment,
     "status": status,
     "payment_type": paymentType,
     "sum_price": sumPrice,
@@ -92,8 +92,8 @@ class Address {
   });
 
   String address;
-  dynamic distance;
-  dynamic duration;
+  String distance;
+  String duration;
 
   factory Address.fromJson(Map<String, dynamic> json) => Address(
     address: json["address"],

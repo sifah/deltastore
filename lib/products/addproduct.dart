@@ -1,9 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:deltastore/config.dart';
+import 'package:deltastore/field/showMyToast.dart';
+import 'package:http/http.dart' as http;
 import 'package:deltastore/api/api.dart';
-import 'package:deltastore/api/product.dart';
+import 'package:deltastore/api/toJsonGroup_product.dart';
+import 'package:deltastore/api/toJsonProduct.dart';
+import 'package:deltastore/main_order.dart';
 import 'package:deltastore/products/editimage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+List futureProduct;
+int check = 1;
 
 class PageAddProduct extends StatefulWidget {
   @override
@@ -11,6 +21,28 @@ class PageAddProduct extends StatefulWidget {
 }
 
 class _PageAddProduct extends State {
+  // Future _futureProduct;
+  bool loading = false;
+
+  void loadProduct() async {
+    print('load');
+    if (!mounted) return;
+    if (mounted) {
+      if(check ==0){
+        setState(() {
+          loading = true;
+          showToastBottom(text: 'บันทึกข้อมูล');
+        });
+      }
+      final future = await fetchProduct();
+      setState(() {
+        futureProduct = future;
+        check = 1;
+        showToastBottom(text: 'บันทึกสำเร็จ');
+        loading = false;
+      });
+    }
+  }
 
   Future<void> _alertPic(Product product) async {
     return showDialog(
@@ -87,25 +119,26 @@ class _PageAddProduct extends State {
                               Container(
                                 margin: EdgeInsets.only(left: 10),
                                 padding: EdgeInsets.only(left: 5, right: 5),
-                                child: Text('ชื่อกลุ่ม'),
+                                child: Text('${product.groupName}'),
                               )
                             ]),
-                          ), //ชื่อกลุ่ม
-                          Container(
-                            margin: EdgeInsets.only(top: 3),
-                            child: Row(
-                              children: [
-                                Text('หมวดหมู่ :',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Container(
-                                  margin: EdgeInsets.only(left: 10),
-                                  padding: EdgeInsets.only(left: 5, right: 5),
-                                  child: Text('ชื่อหมวด'),
-                                )
-                              ],
-                            ),
-                          ), //ชื่อหมวด
+                          ),
+                          //ชื่อกลุ่ม
+                          // Container(
+                          //   margin: EdgeInsets.only(top: 3),
+                          //   child: Row(
+                          //     children: [
+                          //       Text('หมวดหมู่ :',
+                          //           style:
+                          //               TextStyle(fontWeight: FontWeight.bold)),
+                          //       Container(
+                          //         margin: EdgeInsets.only(left: 10),
+                          //         padding: EdgeInsets.only(left: 5, right: 5),
+                          //         child: Text('ชื่อหมวด'),
+                          //       )
+                          //     ],
+                          //   ),
+                          // ), //ชื่อหมวด
                           Container(
                             margin: EdgeInsets.only(top: 3),
                             child: Row(
@@ -114,7 +147,7 @@ class _PageAddProduct extends State {
                                   'สถานะ :',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                product.status == '3'
+                                product.status == '0'
                                     ? Container(
                                         margin: EdgeInsets.only(left: 10),
                                         padding:
@@ -162,7 +195,7 @@ class _PageAddProduct extends State {
                                                         .circular(5),
                                                 color: Colors.grey[300]),
                                             child: Text(
-                                              'หมด',
+                                              'ซ่อน',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -170,7 +203,8 @@ class _PageAddProduct extends State {
                                           )
                               ],
                             ),
-                          ), //สถานะ
+                          ),
+                          //สถานะ
                           Container(
                             margin: EdgeInsets.only(top: 3),
                             child: Row(
@@ -196,7 +230,8 @@ class _PageAddProduct extends State {
                                 )
                               ],
                             ),
-                          ), //ราคา
+                          ),
+                          //ราคา
                         ],
                       ),
                     )
@@ -211,16 +246,22 @@ class _PageAddProduct extends State {
                     child: Text('ปิดออก')),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              EditImage(product: product)));
+                      Navigator.pop(context);
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  EditImage(product: product)))
+                          .whenComplete(() => loadProduct());
                     },
-                    child: Text('แก้ไข'))
+                    child: Text(
+                      'แก้ไข',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ))
               ],
             ));
   }
 
-  Future alertRemove(int index) {
+  Future alertRemove(String foodId) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -236,8 +277,7 @@ class _PageAddProduct extends State {
                   child: Text('ยกเลิก')),
               TextButton(
                   onPressed: () {
-                    //onSaveDistance(idRes, index: index);
-                    Navigator.of(context).pop();
+                   onRemove(foodId,context);
                   },
                   child: Text(
                     'ยืนยัน',
@@ -247,20 +287,65 @@ class _PageAddProduct extends State {
           );
         });
   }
+
+  void onRemove(String productId,BuildContext context) {
+    String param = jsonEncode(<String, String>{
+      'f_id': productId,
+      'id_res_auto': token['data']['id_res_auto']
+    });
+    print(param);
+    http.post('${Config.API_URL}delete_food', body: param).then((res) {
+      print(res.body);
+      if(res.body == '1'){
+        Navigator.pop(context);
+        showToastBottom(text: 'ลบข้อมูล');
+        print('success');
+      }else{
+        showToastBottom(text: 'ลบไม่สำเร็จ');
+        print('fail');
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    if(futureProduct == null){
+      loadProduct();
+    }
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (check == 0) {
+      loadProduct();
+    }
+    super.didChangeDependencies();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          child: FutureBuilder(
-              future: fetchProduct(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
+      body: futureProduct == null || loading
+          ? SpinKitFadingCircle(
+              color: Colors.blue,
+            )
+          : Container(
+              margin: EdgeInsets.only(bottom: 30),
+              child:
+                  // FutureBuilder(
+                  //     future: _futureProduct,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.hasData) {
+                  //         return
+                  ListView.builder(
                       padding: EdgeInsets.only(bottom: 40),
-                      itemCount: snapshot.data.length,
+                      itemCount: futureProduct.length,
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, index) {
-                        Product product = snapshot.data[index];
+                        Product product = futureProduct[index];
                         return Container(
                             height: 85,
                             width: double.maxFinite,
@@ -272,7 +357,8 @@ class _PageAddProduct extends State {
                             child: InkWell(
                               onTap: () async {
                                 print('edit = $index');
-                                _alertPic(snapshot.data[index]);
+                                _alertPic(futureProduct[index]);
+                                //_alertPic(snapshot.data[index);
                               },
                               child: Column(
                                 //mainAxisAlignment: MainAxisAlignment.start,
@@ -326,6 +412,9 @@ class _PageAddProduct extends State {
                                                                   FontWeight
                                                                       .bold),
                                                           maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          softWrap: false,
                                                         ),
                                                         Flexible(
                                                           child: Container(
@@ -343,42 +432,64 @@ class _PageAddProduct extends State {
                                                             ),
                                                           ),
                                                         ),
-                                                        Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  top: 5),
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 2,
-                                                                  right: 2),
-                                                          height: 20,
-                                                          decoration:
-                                                              BoxDecoration(
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              margin: EdgeInsets
+                                                                  .only(top: 5),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          5),
+                                                              // height: 20,
+                                                              decoration: BoxDecoration(
                                                                   color: Colors
                                                                           .blue[
                                                                       400],
-                                                                  boxShadow: [
-                                                                    BoxShadow(
-                                                                      spreadRadius:
-                                                                          2,
-                                                                      color: Colors
-                                                                              .blue[
-                                                                          400],
-                                                                    )
-                                                                  ],
                                                                   borderRadius:
                                                                       BorderRadius.all(
                                                                           Radius.circular(
                                                                               5))),
-                                                          child: Text(
-                                                            '${product.price} บาท',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .white70),
-                                                          ),
+                                                              child: Text(
+                                                                '${product.price} บาท',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white70),
+                                                              ),
+                                                            ),
+                                                            product.status ==
+                                                                    '0'
+                                                                ? Container(
+                                                                    margin: EdgeInsets.only(
+                                                                        left: 7,
+                                                                        top: 5),
+                                                                    padding: EdgeInsets
+                                                                        .symmetric(
+                                                                            horizontal:
+                                                                                5),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                5),
+                                                                        color: Colors
+                                                                            .red),
+                                                                    child: Text(
+                                                                      'หมด',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              Colors.white),
+                                                                    ),
+                                                                  )
+                                                                : Padding(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero)
+                                                          ],
                                                         ),
                                                       ],
                                                     )),
@@ -409,13 +520,14 @@ class _PageAddProduct extends State {
                                                         child: const Text('ลบ',
                                                             style: TextStyle(
                                                                 //fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .white)),
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.white)),
                                                         onPressed: () {
-                                                          alertRemove(index);
+                                                          setState(() {
+                                                            check = 0 ;
+
+                                                          });
+                                                          alertRemove(product.fId).whenComplete(() => loadProduct());
                                                           print('delete');
                                                         },
                                                       ),
@@ -428,16 +540,19 @@ class _PageAddProduct extends State {
                                 ],
                               ),
                             ));
-                      });
-                }
-                return SpinKitFadingCircle(
-                  color: Colors.blue,
-                );
-              })),
+                      })
+              // }
+              // return SpinKitFadingCircle(
+              // color: Colors.blue,
+              // );
+              // })
+              ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (BuildContext context) => EditImage()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+                  builder: (BuildContext context) => EditImage()))
+              .whenComplete(() => loadProduct());
         },
         child: Icon(Icons.add),
       ),

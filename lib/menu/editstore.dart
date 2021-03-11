@@ -120,7 +120,7 @@ class _EditStore extends State {
     }
   }
 
-  void onSave() {}
+  // void onSave() {}
 
   void setText(ResName resName) {
     _nameStoreEN.text = resName.name.en;
@@ -136,7 +136,7 @@ class _EditStore extends State {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
-        title: Text('แก้ไขข้อมูลร้านค้า'),
+        title: Text('แก้ไขข้อมูลร้านอาหาร'),
         centerTitle: true,
       ),
       body: FutureBuilder(
@@ -435,6 +435,7 @@ class _EditStore extends State {
               ),
               color: Colors.green,
               onPressed: (){
+                onSubmit();
                 print('บันทึกข้อมูล');
               },
               child: Text('บันทึก',style: TextStyle(

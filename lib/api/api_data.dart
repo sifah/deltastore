@@ -6,6 +6,8 @@ import 'package:deltastore/api/toJsonDistance.dart';
 import 'package:deltastore/api/toJsonPicture.dart';
 import 'package:deltastore/api/toJsonRes.dart';
 
+
+
 Future<List<Payments>> fetchPayment() async {
   String idRes = token['data']['id_res_auto'];
   final res = await http.get('${Config.API_URL}get_payments/$idRes');

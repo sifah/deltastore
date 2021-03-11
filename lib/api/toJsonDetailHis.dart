@@ -16,7 +16,7 @@ class DetailHistory {
     this.netPrice,
   });
 
-  DateTime date;
+  String date;
   String orderIdRes;
   String orderId;
   String table;
@@ -26,7 +26,7 @@ class DetailHistory {
   String netPrice;
 
   factory DetailHistory.fromJson(Map<String, dynamic> json) => DetailHistory(
-    date: DateTime.parse(json["date"]),
+    date: json["date"],
     orderIdRes: json["order_id_res"],
     orderId: json["order_id"],
     table: json["table"],
@@ -37,7 +37,7 @@ class DetailHistory {
   );
 
   Map<String, dynamic> toJson() => {
-    "date": date.toIso8601String(),
+    "date": date,
     "order_id_res": orderIdRes,
     "order_id": orderId,
     "table": table,

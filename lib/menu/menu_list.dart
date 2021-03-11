@@ -22,7 +22,7 @@ class _MenuListState extends State<MenuList> {
 
   void onShare(BuildContext context, String url){
     final RenderBox box = context.findRenderObject();
-    final String text = '$url';
+    final String text = url;
 
     Share.share(
       text,
@@ -60,10 +60,10 @@ class _MenuListState extends State<MenuList> {
         new MaterialPageRoute(builder: (BuildContext context) => new BankMenu()));
   }
 
-  void onChangPass(){
-    Navigator.push(context,
-        new MaterialPageRoute(builder: (BuildContext context) => new ChangPass()));
-  }
+  // void onChangPass(){
+  //   Navigator.push(context,
+  //       new MaterialPageRoute(builder: (BuildContext context) => new ChangPass()));
+  // }
 
   void onEmployee(){
     Navigator.push(context,

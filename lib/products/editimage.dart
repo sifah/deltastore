@@ -1,7 +1,14 @@
-import 'package:deltastore/api/product.dart';
+import 'dart:convert';
+import 'package:deltastore/products/addproduct.dart';
+import 'package:http/http.dart' as http;
+import '../config.dart';
+import 'package:deltastore/api/api.dart';
+import 'package:deltastore/api/toJsonGroup_product.dart';
+import 'package:deltastore/api/toJsonProduct.dart';
 import 'package:deltastore/products/store_photo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../main_order.dart';
 
 class EditImage extends StatefulWidget {
   final Product product;
@@ -14,12 +21,54 @@ class EditImage extends StatefulWidget {
 
 class _EditImageState extends State<EditImage> {
   TextEditingController nameProduct = TextEditingController();
-  TextEditingController nameGroup = TextEditingController();
-  TextEditingController type = TextEditingController();
   TextEditingController price = TextEditingController();
-  TextEditingController description = TextEditingController();
+  TextEditingController detailProduct = TextEditingController();
 
-  String _photoUrl;
+  List<String> _productStatus = ['หมด', 'ซ่อน', 'แสดง'];
+  String _photoUrl, selectValue, dropDownValue, picId='';
+  String productId = '0';
+  List listGroup = [];
+  String selectGroup, groupId;
+
+  void getGroup() async {
+    final res = await fetchGroupProduct();
+
+    setState(() {
+      listGroup = res;
+    });
+  }
+
+  void onSave({String idRes, String productID}) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    String params = jsonEncode(<String, String>{
+      'f_id': productID,
+      'id_res_auto': idRes,
+      'name': nameProduct.text,
+      'group_id': groupId,
+      'status': selectValue,
+      'price': price.text,
+      'detail': detailProduct.text,
+      'pic_id': picId,
+      //'pic_url': _photoUrl.split('/').last
+    });
+
+    print(params);
+
+    http.post('${Config.API_URL}update_food', body: params).then((res) {
+      print(res.body);
+
+      if (res.body == '1') {
+        Navigator.pop(context);
+        setState(() {
+          check = 0;
+        });
+        print('success');
+      } else {
+        print('fail');
+      }
+    });
+  }
+
 
   void refresh() async {
     setState(() {
@@ -39,12 +88,19 @@ class _EditImageState extends State<EditImage> {
     // TODO: implement initState
     if (widget.product != null) {
       nameProduct.text = widget.product.name;
-      //type.text = widget.product.type;
       price.text = widget.product.price;
-      description.text = widget.product.detail;
+      detailProduct.text = widget.product.detail;
       _photoUrl = widget.product.picUrl;
+      selectValue = widget.product.status;
+      selectGroup = widget.product.groupName;
+      dropDownValue = _productStatus[int.parse(widget.product.status)];
+      picId = widget.product.picId;
+      productId = widget.product.fId;
+      groupId = widget.product.groupId;
+
       //
     }
+    getGroup();
 
     super.initState();
   }
@@ -61,7 +117,7 @@ class _EditImageState extends State<EditImage> {
         body: SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.all(10),
-            width: double.maxFinite,
+            //width: double.maxFinite,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,37 +177,79 @@ class _EditImageState extends State<EditImage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('ชื่อสินค้า :'),
-                        TextField(
-                          // decoration: InputDecoration(
-                          //     hintText: '${widget.product.name}'),
-                          controller: nameProduct,
-                        ),
-                        Text('กลุ่มสินค้า :'),
-                        TextField(
-                          decoration: InputDecoration(hintText: 'ชื่อกลุ่ม'),
-                          controller: nameGroup,
-                        ),
-                        Text('หมดหมู่ :'),
-                        TextField(
-                          decoration: InputDecoration(hintText: 'หมวดหมู่'),
-                          controller: type,
-                        ),
-                        Text('ราคา :'),
-                        TextField(
-                          // decoration: InputDecoration(
-                          //     hintText: '${widget.product.price} บาท'),
-                          controller: price,
-                        ),
-                        Text('รายละเอียด :'),
-                        TextField(
-                          minLines: 1,
-                          maxLines: 10,
-                          // decoration: InputDecoration(
-                          //   hintText: '${widget.product.detail}',
-                          // ),
-                          controller: description,
-                        ),
+                        fieldText('ชื่อสินค้า:', nameProduct),
+                        Container(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('กลุ่มสินค้า :'),
+                                DropdownButtonFormField(
+                                  hint: Text('เลือกกลุ่ม'),
+                                  value: selectGroup,
+                                  items: listGroup.map((value) {
+                                    GroupProduct group = value;
+                                    return DropdownMenuItem(
+                                        onTap: () {
+                                          setState(() {
+                                            groupId = group.fgId;
+                                          });
+                                          // print(selectIDGroup);
+                                        },
+                                        value: group.name,
+                                        child: Text('${group.name}'));
+                                  }).toList(),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectGroup = newValue;
+                                      //   valGroup =
+                                      //   '${listGroup.length}';
+                                    });
+                                  },
+                                ),
+                              ],
+                            )),
+                        Container(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('สถานะ :'),
+                                DropdownButtonFormField(
+                                  hint: Text('เลือกสถานะ'),
+                                  value: dropDownValue,
+                                  items: _productStatus.map((value) {
+                                    return DropdownMenuItem(
+                                        value: value, child: Text(value));
+                                  }).toList(),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      dropDownValue = newValue;
+                                      selectValue = '${_productStatus.indexOf(newValue)}';
+                                    });
+                                  },
+                                ),
+                              ],
+                            )),
+                        fieldText('ราคา:', price),
+                        fieldDetail('รายละเอียด:', detailProduct)
+                        // Container(
+                        //     padding: EdgeInsets.only(top: 10),
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         Text('รายละเอียด :'),
+                        //         TextField(
+                        //           minLines: 1,
+                        //           maxLines: 10,
+                        //           // decoration: InputDecoration(
+                        //           //   hintText: '${widget.product.detail}',
+                        //           // ),
+                        //           controller: detailProduct,
+                        //         ),
+                        //       ],
+                        //     )),
+
                       ],
                     ),
                   ),
@@ -169,6 +267,8 @@ class _EditImageState extends State<EditImage> {
                   borderRadius: BorderRadius.circular(10)),
               color: Colors.green,
               onPressed: () {
+                onSave(idRes: token['data']['id_res_auto'],productID: productId);
+                //Navigator.pop(context);
                 print('บันทึกข้อมูล');
               },
               child: Text(
@@ -181,22 +281,34 @@ class _EditImageState extends State<EditImage> {
             ),
           ],
         )
-        // bottomNavigationBar: Container(
-        //   height: 55,
-        //   color: Colors.green,
-        //   child: TextButton(
-        //     onPressed: () {
-        //       print('บันทึกข้อมูล');
-        //     },
-        //     child: Text(
-        //       'บันทึก',
-        //       style: TextStyle(
-        //           fontSize: 20,
-        //           fontWeight: FontWeight.bold,
-        //           color: Colors.white),
-        //     ),
-        //   ),
-        // )
         );
+  }
+  Widget fieldText(String txt,controller){
+    return Container(
+      margin: EdgeInsets.only(top: 5),
+      child: TextFormField(
+        minLines: 1,
+        maxLines: 2,
+        decoration: InputDecoration(
+          labelText: txt,
+          labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)
+
+        ),
+        controller:  controller,),
+    );
+  }
+  Widget fieldDetail(String text,con){
+    return Container(
+      margin: EdgeInsets.only(top: 5),
+      child: TextFormField(
+        minLines: 1,
+        maxLines: 5,
+        decoration: InputDecoration(
+            labelText: text,
+            labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)
+
+        ),
+        controller:  con,),
+    );
   }
 }

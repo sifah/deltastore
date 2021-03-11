@@ -1,10 +1,17 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:deltastore/config.dart';
 import 'package:deltastore/api/api.dart';
 import 'package:deltastore/api/toJsonEmployee.dart';
+import 'package:deltastore/field/showMyToast.dart';
 import 'package:deltastore/menu/edit_employee.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import '../main_order.dart';
+
 
 class Employee extends StatefulWidget {
   @override
@@ -38,11 +45,63 @@ class _EmployeeState extends State<Employee> {
 
   }
 
+  void onRemove(String adminId,BuildContext context) {
+    String param = jsonEncode(<String, String>{
+      'admin_id': adminId,
+      'id_res_auto': token['data']['id_res_auto']
+    });
+    print(param);
+    http.post('${Config.API_URL}delete_employee', body: param).then((res) {
+      print(res.body);
+      if(res.body == '1'){
+        Navigator.pop(context);
+        showToastBottom(text: 'ลบข้อมูล');
+        print('success');
+      }else{
+        showToastBottom(text: 'ลบไม่สำเร็จ');
+        print('fail');
+      }
+    });
+  }
+
+  Future _alertRemove(String employeeId) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            title: Text('ยืนยันการลบ'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('ยกเลิก')),
+              TextButton(
+                  onPressed: () {
+                    onRemove(employeeId,context);
+                  },
+                  child: Text(
+                    'ยืนยัน',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     loadEmployee();
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    loadEmployee();
+    super.didChangeDependencies();
   }
 
   @override
@@ -119,32 +178,6 @@ class _EmployeeState extends State<Employee> {
                                 ),
                               ),
                             ),
-
-                            // Container(
-                            //   padding: EdgeInsets.only(left: 5,right: 5,top: 3),
-                            //   height: 30,
-                            //   decoration: BoxDecoration(
-                            //     borderRadius: BorderRadius.circular(10),
-                            //     color: employee.active == '0'
-                            //         ? Color.alphaBlend(
-                            //         Colors.red.withOpacity(0.8), Colors.white)
-                            //         : Colors.green,
-                            //   ),
-                            //   //elevation: 5,
-                            //   // shape: RoundedRectangleBorder(
-                            //   //   borderRadius: BorderRadius.circular(15.0),
-                            //   // ),
-                            //
-                            //   child: Container(
-                            //       padding: EdgeInsets.symmetric(
-                            //           vertical: 1, horizontal: 10),
-                            //       child: Text(
-                            //         employee.active == '0'
-                            //             ? 'ไม่ใช้งาน'
-                            //             : 'ใช้งาน',
-                            //         style: TextStyle(color: Colors.white),
-                            //       )),
-                            // ),
                           ),
                           Container(
                             padding: EdgeInsets.all(10),
@@ -185,37 +218,53 @@ class _EmployeeState extends State<Employee> {
                                     )
                                   ],
                                 ),
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    //crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.only(right: 4),
-                                        child: RawMaterialButton(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                            ),
-                                            constraints: BoxConstraints(
-                                                minWidth: 40, minHeight: 30),
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            fillColor: Colors.amber,
-                                            child: Text('แก้ไข',
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                            onPressed: () {
-                                              onClick(
-                                                  data: snapshot.data[index]);
-                                              print('edit');
-                                            }),
-                                      )
-                                    ],
-                                  ),
-                                )
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(right: 4),
+                                      child: RawMaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(10.0),
+                                          ),
+                                          constraints: BoxConstraints(
+                                              minWidth: 40, minHeight: 30),
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          fillColor: Colors.amber,
+                                          child: Text('แก้ไข',
+                                              style: TextStyle(
+                                                  color: Colors.black,fontWeight: FontWeight.bold)),
+                                          onPressed: () {
+                                            onClick(
+                                                data: snapshot.data[index]);
+                                            print('edit');
+                                          }),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(right: 4),
+                                      child: RawMaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(10.0),
+                                          ),
+                                          constraints: BoxConstraints(
+                                              minWidth: 40, minHeight: 30),
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          fillColor: Colors.red[300],
+                                          child: Text('ลบ',
+                                              style: TextStyle(
+                                                  color: Colors.white,fontWeight: FontWeight.bold)),
+                                          onPressed: () {
+                                            _alertRemove(employee.adminId).whenComplete(() => loadEmployee());
+                                            print('delete');
+                                          }),
+                                    ),
+                                  ],
+                                ),
+
                               ],
                             ),
                           ),
@@ -233,6 +282,25 @@ class _EmployeeState extends State<Employee> {
         },
         child: Icon(Icons.add),
       ),
+    );
+  }
+  Widget buttonClick(color1,txt,color2, {Function function}){
+    return Container(
+      margin: EdgeInsets.only(right: 4),
+      child: RawMaterialButton(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(10.0),
+          ),
+          constraints: BoxConstraints(
+              minWidth: 40, minHeight: 30),
+          padding: EdgeInsets.only(
+              left: 10, right: 10),
+          fillColor: color1,
+          child: Text(txt,
+              style: TextStyle(
+                  color: color2,fontWeight: FontWeight.bold)),
+          onPressed: function()),
     );
   }
 }

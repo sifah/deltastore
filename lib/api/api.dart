@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:deltastore/api/product.dart';
+import 'package:deltastore/api/toJsonProduct.dart';
 import 'package:deltastore/api/toJsonEmployee.dart';
 import 'package:deltastore/api/toJsonOrder.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 
 import '../config.dart';
-import 'group_product.dart';
+import 'toJsonGroup_product.dart';
 
 Future<List<GroupProduct>> fetchGroupProduct() async {
   dynamic token = await FlutterSession().get('token');

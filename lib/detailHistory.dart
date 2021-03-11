@@ -1,6 +1,4 @@
-import 'package:commons/commons.dart';
 import 'package:deltastore/api/history_api.dart';
-import 'package:deltastore/api/order_api.dart';
 import 'package:deltastore/api/toJsonDetailHis.dart';
 import 'package:deltastore/api/toJsonHistory.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,33 +7,32 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HistoryDetail extends StatefulWidget {
   final History orderID;
-  final History orderResID;
 
-  const HistoryDetail({Key key, this.orderID, this.orderResID})
+  const HistoryDetail({Key key, this.orderID})
       : super(key: key);
 
   @override
-  _HistoryDetailState createState() => _HistoryDetailState(orderID, orderResID);
+  _HistoryDetailState createState() => _HistoryDetailState(orderID);
 }
 
 class _HistoryDetailState extends State<HistoryDetail> {
-  History orderID, orderResID;
+  History orderID;
   String dateTime;
 
-  _HistoryDetailState(this.orderID, this.orderResID);
-
+  _HistoryDetailState(this.orderID);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'รายละเอียด',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          //style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        backgroundColor: Color.fromRGBO(43, 108, 171, 1),
         centerTitle: true,
       ),
       body: FutureBuilder(
-        future: fetchDetailHistory(orderResID.orderId),
+        future: fetchDetailHistory(orderID.orderId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             DetailHistory detail = snapshot.data;
@@ -49,35 +46,21 @@ class _HistoryDetailState extends State<HistoryDetail> {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 // mainAxisSize: MainAxisSize.min,
                 children: [
-                  container(
-                      Text(
-                        'Order ID : ',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text('${detail.orderIdRes}')),
-                  container(
-                      Text('เมื่อ : ',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('${detail.date}')),
+                  container('Order ID : ', Text('${detail.orderIdRes}')),
+                  container('เมื่อ : ', Text('${detail.date}')),
                   //container(Text('orderID: ${detail.orderId}')),
                   detail.table == '-'
                       ? Container(
-                      padding: EdgeInsets.symmetric(vertical: 3),
-                      child: container(Text('เดลิเวอรี่'), Text('')))
-                      : container(
-                          Text('โต๊ะ : ',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text('${detail.table}')),
-                  container(
-                      Text('พนักงาน : ',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('${detail.by}')),
+                          padding: EdgeInsets.symmetric(vertical: 3),
+                          child: container('เดลิเวอรี่', Text('')))
+                      : container('โต๊ะ : ', Text('${detail.table}')),
+                  container('พนักงาน : ', Text('${detail.by}')),
                   Container(
                     margin: EdgeInsets.all(10),
                     padding: EdgeInsets.only(top: 12),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: Colors.blue[300],
+                        color: Colors.blueGrey[100],
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.5),
@@ -103,10 +86,10 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                   Datum dataItem = detailList[index];
                                   return DefaultTextStyle(
                                     style: TextStyle(
-                                        color: Colors.white,
+                                        color: Colors.black,
                                         fontFamily: 'Kanit',
                                         fontSize: 16,
-                                        fontWeight: FontWeight.w400),
+                                        fontWeight: FontWeight.bold),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -128,14 +111,13 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                                   )),
                                               Text(
                                                   '${dataItem.sum.split('.').first} บาท '),
-
                                             ],
                                           ),
                                         ),
                                         Divider(
                                           indent: 8,
                                           endIndent: 8,
-                                          color: Colors.black38,
+                                          color: Colors.black12
                                         )
                                       ],
                                     ),
@@ -146,7 +128,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                   borderRadius: BorderRadius.only(
                                       bottomRight: Radius.circular(10),
                                       bottomLeft: Radius.circular(10)),
-                                  color: Color.fromRGBO(255, 255, 255, 0.7)),
+                                  color: Colors.white.withOpacity(0.3)),
                               child: ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -179,37 +161,13 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                     )),
-                                                Text('${_endPrice.sum.split('.').first} บาท '),
+                                                Text(
+                                                    '${_endPrice.sum.split('.').first} บาท '),
                                               ],
                                             ),
                                           ),
-                                          // Divider(
-                                          //   indent: 8,
-                                          //   endIndent: 8,
-                                          //   color: Colors.black38,
-                                          // )
-
-                                          // Container(
-                                          //   margin:
-                                          //       EdgeInsets.only(left: 15),
-                                          //   child: ListView.builder(
-                                          //       physics: NeverScrollableScrollPhysics(),
-                                          //       itemCount: detailItem.length,
-                                          //       itemBuilder: (BuildContext context, index){
-                                          //         List _detailItem = detailItem[index];
-                                          //         return Column(
-                                          //           crossAxisAlignment: CrossAxisAlignment.start,
-                                          //           children: [
-                                          //             Text('${detailItem.length}')
-                                          //           ],
-                                          //         );
-                                          //       }),
-                                          // )
                                         ],
-                                      )
-
-
-                                      );
+                                      ));
                                 },
                               ),
                             )
@@ -229,7 +187,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
   }
 }
 
-Widget container(Text text1, Text text2) {
+Widget container(String text1, Text text2) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -237,16 +195,23 @@ Widget container(Text text1, Text text2) {
         //margin: EdgeInsets.only(top: 5),
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 3),
         child: Row(
-          children: [text1, text2],
+          children: [
+            Text(
+              text1,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            text2
+          ],
         ),
       ),
       Divider(
         indent: 1,
         endIndent: 1,
         color: Colors.black12,
-        thickness: 2,
+        thickness: 1,
       )
     ],
   );
 }
+
 // }
