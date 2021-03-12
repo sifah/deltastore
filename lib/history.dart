@@ -86,8 +86,8 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(listHistory);
-    print(count);
+    // print(listHistory);
+    // print(count);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),

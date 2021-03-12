@@ -7,7 +7,7 @@ showToastBottom(
   Widget toast = Container(
     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(5)),
+      borderRadius: BorderRadius.all(Radius.circular(30)),
       color: backgroundColor == null ? Colors.black.withOpacity(0.9) : backgroundColor,
     ),
     child: Text(

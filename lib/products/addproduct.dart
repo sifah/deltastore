@@ -38,7 +38,7 @@ class _PageAddProduct extends State {
       setState(() {
         futureProduct = future;
         check = 1;
-        showToastBottom(text: 'บันทึกสำเร็จ');
+        // showToastBottom(text: 'บันทึกสำเร็จ');
         loading = false;
       });
     }

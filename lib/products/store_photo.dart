@@ -10,28 +10,28 @@ import 'dart:io';
 
 import 'editimage.dart';
 
-String photoUrl;
+String photoUrl, photoId;
+List listStorePhoto;
 
 class StorePhotoPage extends StatefulWidget {
-  final Function function ;
+  final Function function;
 
   const StorePhotoPage({Key key, this.function}) : super(key: key);
+
   @override
   _StorePhotoPageState createState() => _StorePhotoPageState();
 }
 
 class _StorePhotoPageState extends State<StorePhotoPage> {
-  Future fetchPhoto;
   List list;
-  File _file ;
+  File _file;
+
   String base64;
 
-
-
   void loadPicture() async {
-    Future res = fetchAllPicture();
+    var res = await fetchAllPicture();
     setState(() {
-      fetchPhoto = res;
+      listStorePhoto = res;
     });
   }
 
@@ -43,7 +43,6 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
     uploadPhoto();
   }
 
-
   void uploadPhoto() {
     if (_file == null) return;
     List<int> photoBytes = _file.readAsBytesSync();
@@ -51,8 +50,7 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
     base64 = '$photoType;${base64Encode(photoBytes)}';
 
     print(base64);
-    // กดแล้วให้ส่งไป api 
-
+    // กดแล้วให้ส่งไป api
   }
 
   Future alertDelete() {
@@ -120,30 +118,25 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
         // ),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: fetchPhoto,
-        builder: (context, snapshot) {
-          print(snapshot.hasData);
-          if (!snapshot.hasData) {
-            return SpinKitFadingCircle(color: Colors.blue);
-          }
-          return GridView.builder(
-            padding: EdgeInsets.only(top: 5),
-            itemCount: snapshot.data.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: (deviceWidth < 400)
-                    ? 3
-                    : (deviceWidth < 800)
-                        ? 6
-                        : 9,
-                crossAxisSpacing: 5.0,
-                mainAxisSpacing: 5.0),
-            itemBuilder: (BuildContext context, int index) {
-              return framePhoto(snapshot.data[index]);
-            },
-          );
-        },
-      ),
+      body: listStorePhoto == null
+          ? SpinKitFadingCircle(
+              color: Colors.blue,
+            )
+          : GridView.builder(
+              padding: EdgeInsets.only(top: 5),
+              itemCount: listStorePhoto.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: (deviceWidth < 400)
+                      ? 3
+                      : (deviceWidth < 800)
+                          ? 6
+                          : 9,
+                  crossAxisSpacing: 5.0,
+                  mainAxisSpacing: 5.0),
+              itemBuilder: (BuildContext context, int index) {
+                return framePhoto(listStorePhoto[index]);
+              },
+            ),
       // persistentFooterButtons: [
       //   RaisedButton(
       //     color: Colors.green,
@@ -169,11 +162,10 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
   Widget framePhoto(StorePhoto storePhoto) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        boxShadow: [
-          BoxShadow(color: Colors.black26,blurRadius: 2,spreadRadius: -0.1)
-        ]
-      ),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(color: Colors.black26, blurRadius: 2, spreadRadius: -0.1)
+          ]),
       child: InkWell(
         child: Card(
           clipBehavior: Clip.antiAlias,
@@ -210,9 +202,10 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
             ),
           ),
         ),
-        onTap: (){
+        onTap: () {
           setState(() {
             photoUrl = storePhoto.name;
+            photoId = storePhoto.id;
           });
           // Navigator.pop(context);
           widget.function();
