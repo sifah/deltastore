@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:flutter_thailand_provinces/flutter_thailand_provinces.dart';
+// import 'package:flutter_thailand_provinces/flutter_thailand_provinces.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'history.dart';
@@ -73,16 +73,16 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   final List<Widget> _children = [Order(), Product(), HistoryPage(), Setting()];
 
-  void loadProvince() async {
-    await ThailandProvincesDatabase.init();
-    print('load database Province'); // initialize database.
-  }
+  // void loadProvince() async {
+  //   // await ThailandProvincesDatabase.init();
+  //   print('load database Province'); // initialize database.
+  // }
 
   @override
   void initState() {
     fToast = FToast();
     fToast.init(context);
-    loadProvince();
+    // loadProvince();
     super.initState();
     setState(() {
       MyHomeApp().setFirebase();

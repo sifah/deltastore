@@ -8,14 +8,14 @@ import 'package:deltastore/main_order.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_thailand_provinces/flutter_thailand_provinces.dart';
+// import 'package:flutter_thailand_provinces/flutter_thailand_provinces.dart';
 import 'package:deltastore/api/api_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ThailandProvincesDatabase.init();
+  // await ThailandProvincesDatabase.init();
   runApp(MaterialApp(
     home: EditStore(),
     debugShowCheckedModeBanner: false,

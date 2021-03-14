@@ -2,11 +2,15 @@ import 'dart:convert';
 
 import 'package:deltastore/api/api_data.dart';
 import 'package:deltastore/api/toJsonPicture.dart';
+import 'package:deltastore/products/select_photo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'package:image/image.dart' as Image;
+// import 'package:multi_image_picker/multi_image_picker.dart';
 
 import 'editimage.dart';
 
@@ -25,6 +29,7 @@ class StorePhotoPage extends StatefulWidget {
 class _StorePhotoPageState extends State<StorePhotoPage> {
   List list;
   File _file;
+  static const String urlUpload = 'https://develop.deltafood.co/upload/server/php/';
 
   String base64;
 
@@ -35,23 +40,29 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
     });
   }
 
-  void selectPhoto() async {
-    var file = await ImagePicker().getImage(source: ImageSource.gallery);
-    setState(() {
-      _file = File(file.path);
-    });
-    uploadPhoto();
-  }
+  // void selectPhoto() async {
+  //   var file = await ImagePicker().getImage(source: ImageSource.gallery);
+  //   setState(() {
+  //     _file = File(file.path);
+  //   });
+  //   // uploadPhoto();
+  // }
 
-  void uploadPhoto() {
-    if (_file == null) return;
-    List<int> photoBytes = _file.readAsBytesSync();
-    String photoType = _file.path.split(".").last;
-    base64 = '$photoType;${base64Encode(photoBytes)}';
-
-    print(base64);
-    // กดแล้วให้ส่งไป api
-  }
+  // void uploadPhoto() {
+  //   if (_file == null) return;
+  //   List<int> photoBytes = _file.readAsBytesSync();
+  //   // String photoType = _file.path.split(".").last;
+  //   // base64 = '$photoType;${base64Encode(photoBytes)}';
+  //   base64 = base64Encode(photoBytes);
+  //   final image = Image.decodeImage(photoBytes);
+  //
+  //
+  //   print(_file.readAsBytesSync());
+  //   // กดแล้วให้ส่งไป api
+  //   http.post(urlUpload,body: _file.uri.path, ).then((res) {
+  //     print(res.body);
+  //   });
+  // }
 
   Future alertDelete() {
     return showDialog(
@@ -153,8 +164,10 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
       //   )
       // ],
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.upload_outlined),
-        onPressed: selectPhoto,
+        child: Icon(Icons.add_to_photos),
+        onPressed: (){
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context)=>SelectPhoto()));
+        },
       ),
     );
   }
