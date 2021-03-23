@@ -1,7 +1,10 @@
 import 'dart:convert';
+// import 'dart:html';
 
 import 'package:deltastore/api/api_data.dart';
 import 'package:deltastore/api/toJsonPicture.dart';
+import 'package:deltastore/config.dart';
+import 'package:deltastore/main_order.dart';
 import 'package:deltastore/products/select_photo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +13,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:image/image.dart' as Image;
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/widgets.dart';
+import 'package:path/path.dart';
 // import 'package:multi_image_picker/multi_image_picker.dart';
 
 import 'editimage.dart';
@@ -29,104 +36,111 @@ class StorePhotoPage extends StatefulWidget {
 class _StorePhotoPageState extends State<StorePhotoPage> {
   List list;
   File _file;
-  static const String urlUpload = 'https://develop.deltafood.co/upload/server/php/';
+  static const String urlUpload =
+      'https://develop.deltafood.co/upload/server/php/';
 
   String base64;
+  BuildContext _context;
 
-  void loadPicture() async {
-    var res = await fetchAllPicture();
-    setState(() {
-      listStorePhoto = res;
+  File _selectedFile;
+  Response response;
+  String progress;
+  Dio dio = new Dio();
+
+  Future loadPicture() async {
+    if (!mounted) return;
+    if (mounted) {
+      var res = await fetchAllPicture();
+      setState(() {
+        listStorePhoto = res;
+      });
+    }
+  }
+
+  void selectPhoto() async {
+    if (!mounted) return;
+    if (mounted) {
+      var file = await ImagePicker().getImage(source: ImageSource.gallery);
+      setState(() {
+        _file = File(file.path);
+      });
+      uploadPhoto();
+    }
+  }
+
+  void uploadPhoto() async {
+    String uploadUrl = "${Config.API_URL}upload_picture";
+    if (_file == null) return;
+    List<int> photoBytes = _file.readAsBytesSync();
+    String photoType = _file.path.split(".").last;
+    base64 = '$photoType;${base64Encode(photoBytes)}';
+    // base64 = base64Encode(photoBytes);
+    // final image = Image.decodeImage(photoBytes);
+    String fileName = _file.path.split('/').last;
+
+    String params = jsonEncode({
+      'admin_id': token['data']['admin_id'],
+      'id_res_auto': token['data']['id_res_auto'],
+      'photo': base64
+    });
+    print(params);
+    // กดแล้วให้ส่งไป api
+    http.post('${Config.API_URL}upload_picture', body: params).then((res) {
+      print(res.body);
+      loadPicture();
     });
   }
 
-  // void selectPhoto() async {
-  //   var file = await ImagePicker().getImage(source: ImageSource.gallery);
-  //   setState(() {
-  //     _file = File(file.path);
-  //   });
-  //   // uploadPhoto();
-  // }
-
-  // void uploadPhoto() {
-  //   if (_file == null) return;
-  //   List<int> photoBytes = _file.readAsBytesSync();
-  //   // String photoType = _file.path.split(".").last;
-  //   // base64 = '$photoType;${base64Encode(photoBytes)}';
-  //   base64 = base64Encode(photoBytes);
-  //   final image = Image.decodeImage(photoBytes);
-  //
-  //
-  //   print(_file.readAsBytesSync());
-  //   // กดแล้วให้ส่งไป api
-  //   http.post(urlUpload,body: _file.uri.path, ).then((res) {
-  //     print(res.body);
-  //   });
-  // }
-
   Future alertDelete() {
     return showDialog(
-        context: context,
+        // context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            title: Text('ยืนยันการลบ'),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('ปิดออก')),
-              TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'ยืนยัน',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ))
-            ],
-          );
-        });
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        title: Text('ยืนยันการลบ'),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('ปิดออก')),
+          TextButton(
+              onPressed: () {},
+              child: Text(
+                'ยืนยัน',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ))
+        ],
+      );
+    });
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    loadPicture();
+    if (listStorePhoto == null) {
+      loadPicture();
+    }
     super.initState();
   }
+
+  // @override
+  // void dispose() {
+  //   loadPicture();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
+    _context = context;
     // print(deviceWidth);
     return Scaffold(
       // backgroundColor: Colors.blue,
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
         title: Text('คลังรูปภาพ'),
-        // bottom: PreferredSize(
-        //   preferredSize: Size(50, 50),
-        //   child: ButtonBar(
-        //     alignment: MainAxisAlignment.center,
-        //     mainAxisSize: MainAxisSize.min,
-        //     children: [
-        //       RaisedButton(
-        //         color: Colors.green,
-        //         child: Row(
-        //           children: [
-        //             Icon(Icons.upload_outlined),
-        //             Container(
-        //               margin: EdgeInsets.only(left: 5),
-        //               child: Text('อัพโหลดรูปจากเครื่อง'),
-        //             )
-        //           ],
-        //         ),
-        //         onPressed: () {},
-        //       ),
-        //     ],
-        //   ),
-        // ),
         centerTitle: true,
       ),
       body: listStorePhoto == null
@@ -148,89 +162,64 @@ class _StorePhotoPageState extends State<StorePhotoPage> {
                 return framePhoto(listStorePhoto[index]);
               },
             ),
-      // persistentFooterButtons: [
-      //   RaisedButton(
-      //     color: Colors.green,
-      //     child: Row(
-      //       children: [
-      //         Icon(Icons.upload_outlined),
-      //         Container(
-      //           margin: EdgeInsets.only(left: 5),
-      //           child: Text('อัพโหลดรูปจากเครื่อง'),
-      //         )
-      //       ],
-      //     ),
-      //     onPressed: () {},
-      //   )
-      // ],
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_to_photos),
-        onPressed: (){
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context)=>SelectPhoto()));
+        child: Icon(Icons.drive_folder_upload,
+            size: 35, color: Colors.white.withOpacity(0.9)),
+        onPressed: () {
+          selectPhoto();
+          //  SelectPhoto();
+          // selectFile();
         },
       ),
     );
   }
 
   Widget framePhoto(StorePhoto storePhoto) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          boxShadow: [
-            BoxShadow(color: Colors.black26, blurRadius: 2, spreadRadius: -0.1)
-          ]),
-      child: InkWell(
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          // elevation: 5,
-          color: Color.fromRGBO(43, 108, 171, 1),
-          child: Container(
-            padding: EdgeInsets.all(2),
-            child: Stack(
-              //mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(storePhoto.name),
-                          fit: BoxFit.cover)),
-                  // alignment: Alignment.center,
-                  margin: EdgeInsets.only(bottom: 20),
-                  // child: Image.network(
-                  //   images[index],
-                  //   fit: BoxFit.fill,
-                  // )
+    return InkWell(
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 10,
+        color: Color.fromRGBO(43, 108, 171, 1),
+        child: Container(
+          padding: EdgeInsets.all(2),
+          child: Stack(
+            //mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(storePhoto.name),
+                        fit: BoxFit.cover)),
+                // alignment: Alignment.center,
+                margin: EdgeInsets.only(bottom: 20),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: EdgeInsets.only(left: 5, right: 5),
+                  child: Text('${storePhoto.title}',
+                      style: TextStyle(color: Colors.white),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    padding: EdgeInsets.only(left: 5, right: 5),
-                    child: Text('${storePhoto.title}',
-                        style: TextStyle(color: Colors.white),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         ),
-        onTap: () {
-          setState(() {
-            photoUrl = storePhoto.name;
-            photoId = storePhoto.id;
-          });
-          // Navigator.pop(context);
-          widget.function();
-          Navigator.pop(context);
-
-          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditImage(photoUrl: storePhoto.name,)));
-        },
-        onLongPress: () {
-          alertDelete();
-          print('delete');
-        },
       ),
+      onTap: () {
+        setState(() {
+          photoUrl = storePhoto.name;
+          photoId = storePhoto.id;
+        });
+        Navigator.pop(_context);
+        widget.function();
+        // Navigator.pop(context);
+      },
+      onLongPress: () {
+        alertDelete();
+        print('delete');
+      },
     );
   }
 }

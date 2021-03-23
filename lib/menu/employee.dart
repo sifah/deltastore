@@ -140,9 +140,7 @@ class _EmployeeState extends State<Employee> {
                       child: Column(
                         children: [
                           ListTile(
-                            tileColor: index.isOdd
-                                ? Colors.white.withOpacity(0.3)
-                                : Colors.black.withOpacity(0.04),
+                            tileColor: Colors.black.withOpacity(0.04),
                             leading: CircleAvatar(
                               backgroundImage: employee.proFileUrl.isNotEmpty
                                   ? NetworkImage(employee.proFileUrl)

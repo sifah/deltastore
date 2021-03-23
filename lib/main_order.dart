@@ -1,3 +1,4 @@
+import 'package:deltastore/notification.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -13,8 +14,7 @@ import 'package:flutter/material.dart';
 
 //String id, code, appBar = '';
 FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
-int current = 0, past = 0;
-DatabaseReference databaseDataPay,
+DatabaseReference databaseDataPay,notification,
     databaseOrders,
     databaseSendRider,
     databaseNotifyRider;
@@ -29,6 +29,8 @@ class MyHomeApp extends StatelessWidget {
     token = await FlutterSession().get('token');
     id = token['data']['id_res_auto'];
     code = token['data']['code'];
+
+    notification = firebaseDatabase.reference().child('${id}_${code}').child('new_delivery');
 
     databaseDataPay =
         firebaseDatabase.reference().child('${id}_${code}').child('data_pay');
@@ -47,7 +49,6 @@ class MyHomeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    setFirebase();
     return MaterialApp(
       title: 'Delta Food',
       theme: ThemeData(
@@ -88,6 +89,12 @@ class _MyHomePageState extends State<MyHomePage> {
       MyHomeApp().setFirebase();
     });
   }
+  @override
+  void didChangeDependencies() {
+    orderNoti();
+
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: [
           FFNavigationBarItem(
-            iconData: Icons.calendar_today,
+            iconData: Icons.list_alt_rounded,
             label: 'ออร์เดอร์',
           ),
           FFNavigationBarItem(

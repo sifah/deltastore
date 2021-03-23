@@ -34,7 +34,7 @@ class _EditImageState extends State<EditImage> {
   bool load = true;
   int indexGroup;
 
-  void getGroup() async {
+  void getDetailProduct() async {
     load = true;
     final res = await fetchGroupProduct();
     setState(() {
@@ -81,19 +81,19 @@ class _EditImageState extends State<EditImage> {
 
     print(params);
 
-    // http.post('${Config.API_URL}update_food', body: params).then((res) {
-    //   print(res.body);
-    //
-    //   if (res.body == '1') {
-    //     Navigator.pop(context);
-    //     setState(() {
-    //       check = 0;
-    //     });
-    //     print('success');
-    //   } else {
-    //     print('fail');
-    //   }
-    // });
+    http.post('${Config.API_URL}update_food', body: params).then((res) {
+      print(res.body);
+      if (res.body == '1') {
+        Navigator.pop(context);
+        setState(() {
+          check = 0;
+
+        });
+        print('success');
+      } else {
+        print('fail');
+      }
+    });
   }
 
   void refresh() async {
@@ -106,15 +106,14 @@ class _EditImageState extends State<EditImage> {
     print('1');
   }
 
-  // Product product;
-  //
-  // _EditImageState(this.product);
 
   @override
   void initState() {
-    getGroup();
+    getDetailProduct();
     super.initState();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -173,24 +172,6 @@ class _EditImageState extends State<EditImage> {
                               child: CircleAvatar(
                                 maxRadius: 15,
                                 child: Icon(Icons.add_a_photo,size: 20,),
-                                // child:
-                                // Center(
-                                //   child: IconButton(
-                                //     onPressed: () {
-                                //       Navigator.of(context).push(
-                                //           MaterialPageRoute(
-                                //               builder: (BuildContext context) =>
-                                //                   StorePhotoPage(
-                                //                     function: refresh,
-                                //                   )));
-                                //       print('แก้ไขรูปภาพ');
-                                //     },
-                                //     icon: Icon(
-                                //       Icons.add_a_photo,
-                                //       color: Colors.blue,size: 20,
-                                //     ),
-                                //   ),
-                                // ),
                                 backgroundColor: Colors.white.withOpacity(0.7),
                               ),
                             ),
@@ -216,7 +197,7 @@ class _EditImageState extends State<EditImage> {
                                         style: TextStyle(color: Colors.red),
                                       ),
                                     ),
-                              fieldText('ชื่อสินค้า:', nameProduct),
+                              fieldText('ชื่อสินค้า:', nameProduct,TextInputType.text),
                               Container(
                                   padding: EdgeInsets.only(top: 10),
                                   child: Column(
@@ -242,8 +223,6 @@ class _EditImageState extends State<EditImage> {
                                         onChanged: (newValue) {
                                           setState(() {
                                             selectGroup = newValue;
-                                            //   valGroup =
-                                            //   '${listGroup.length}';
                                           });
                                         },
                                       ),
@@ -273,24 +252,6 @@ class _EditImageState extends State<EditImage> {
                                       ),
                                     ],
                                   )),
-                              fieldText('ราคา:', price),
-                              fieldDetail('รายละเอียด:', detailProduct)
-                              // Container(
-                              //     padding: EdgeInsets.only(top: 10),
-                              //     child: Column(
-                              //       crossAxisAlignment: CrossAxisAlignment.start,
-                              //       children: [
-                              //         Text('รายละเอียด :'),
-                              //         TextField(
-                              //           minLines: 1,
-                              //           maxLines: 10,
-                              //           // decoration: InputDecoration(
-                              //           //   hintText: '${widget.product.detail}',
-                              //           // ),
-                              //           controller: detailProduct,
-                              //         ),
-                              //       ],
-                              //     )),
                             ],
                           ),
                         ),
@@ -308,8 +269,7 @@ class _EditImageState extends State<EditImage> {
                   borderRadius: BorderRadius.circular(10)),
               color: Colors.green,
               onPressed: () {
-                onSave(
-                    idRes: token['data']['id_res_auto'], productID: productId);
+                onSave(idRes: token['data']['id_res_auto'], productID: productId);
                 //Navigator.pop(context);
                 print('บันทึกข้อมูล');
               },
@@ -325,7 +285,7 @@ class _EditImageState extends State<EditImage> {
         ));
   }
 
-  Widget fieldText(String txt, controller) {
+  Widget fieldText(String txt, controller,textType) {
     return Container(
       margin: EdgeInsets.only(top: 5),
       child: TextFormField(
@@ -335,6 +295,7 @@ class _EditImageState extends State<EditImage> {
             labelText: txt,
             labelStyle:
                 TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        keyboardType: textType,
         controller: controller,
       ),
     );

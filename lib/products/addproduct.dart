@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:deltastore/config.dart';
 import 'package:deltastore/field/showMyToast.dart';
+import 'package:deltastore/products/store_photo.dart';
 import 'package:http/http.dart' as http;
 import 'package:deltastore/api/api.dart';
 import 'package:deltastore/api/toJsonGroup_product.dart';
@@ -23,6 +24,17 @@ class PageAddProduct extends StatefulWidget {
 class _PageAddProduct extends State {
   // Future _futureProduct;
   bool loading = false;
+  String _loadPhoto;
+
+  void refresh() async {
+
+    setState(() {
+      if (photoUrl != null) {
+        _loadPhoto = photoUrl;
+      }
+    });
+    print('1');
+  }
 
   void loadProduct() async {
     print('load');
@@ -62,180 +74,167 @@ class _PageAddProduct extends State {
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10))),
-              content: Container(
-                height: 370,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                            height: 150,
-                            width: 230,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadiusDirectional.circular(10),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: Image.network(
-                                product.picUrl,
-                                fit: BoxFit.cover,
-                              ),
-                            )),
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              content:
+              SingleChildScrollView(
+                child: Container(
+                  height: 370,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'รายละเอียด :',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
                           Container(
-                            width: 230,
-                            height: 45,
-                            //color: Colors.blueGrey,
-                            child: product.detail.isEmpty
-                                ? Padding(padding: EdgeInsets.zero)
-                                : SingleChildScrollView(
-                                    //physics: NeverScrollableScrollPhysics(),
-                                    child: Container(
-                                      height: 180,
-                                      child: Text(product.detail),
-                                    ),
-                                  ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            child: Row(children: [
-                              Text(
-                                'กลุ่มสินค้า : ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 10),
-                                padding: EdgeInsets.only(left: 5, right: 5),
-                                child: Text('${product.groupName}'),
-                              )
-                            ]),
-                          ),
-                          //ชื่อกลุ่ม
-                          // Container(
-                          //   margin: EdgeInsets.only(top: 3),
-                          //   child: Row(
-                          //     children: [
-                          //       Text('หมวดหมู่ :',
-                          //           style:
-                          //               TextStyle(fontWeight: FontWeight.bold)),
-                          //       Container(
-                          //         margin: EdgeInsets.only(left: 10),
-                          //         padding: EdgeInsets.only(left: 5, right: 5),
-                          //         child: Text('ชื่อหมวด'),
-                          //       )
-                          //     ],
-                          //   ),
-                          // ), //ชื่อหมวด
-                          Container(
-                            margin: EdgeInsets.only(top: 3),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'สถานะ :',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                              height: 150,
+                              width: 230,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadiusDirectional.circular(10),
                                 ),
-                                product.status == '0'
-                                    ? Container(
-                                        margin: EdgeInsets.only(left: 10),
-                                        padding:
-                                            EdgeInsets.only(left: 5, right: 5),
-                                        height: 25,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadiusDirectional.circular(
-                                                  5),
-                                          color: Colors.red[300],
-                                        ),
-                                        child: Text(
-                                          'หมด',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                        ),
-                                      )
-                                    : product.status == '2'
-                                        ? Container(
-                                            margin: EdgeInsets.only(left: 10),
-                                            padding: EdgeInsets.only(
-                                                left: 5, right: 5),
-                                            height: 25,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadiusDirectional
-                                                        .circular(5),
-                                                color: Colors.green[400]),
-                                            child: Text(
-                                              'แสดง',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                          )
-                                        : Container(
-                                            margin: EdgeInsets.only(left: 10),
-                                            padding: EdgeInsets.only(
-                                                left: 5, right: 5),
-                                            height: 25,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadiusDirectional
-                                                        .circular(5),
-                                                color: Colors.grey[300]),
-                                            child: Text(
-                                              'ซ่อน',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          )
-                              ],
+                                clipBehavior: Clip.antiAlias,
+                                child: Image.network(
+                                  product.picUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              )),
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'รายละเอียด :',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          //สถานะ
-                          Container(
-                            margin: EdgeInsets.only(top: 3),
-                            child: Row(
-                              children: [
+                            Container(
+                              width: 230,
+                              height: 45,
+                              //color: Colors.blueGrey,
+                              child: product.detail.isEmpty
+                                  ? Padding(padding: EdgeInsets.zero)
+                                  : SingleChildScrollView(
+                                      //physics: NeverScrollableScrollPhysics(),
+                                      child: Container(
+                                        height: 180,
+                                        child: Text(product.detail),
+                                      ),
+                                    ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 5),
+                              child: Row(children: [
                                 Text(
-                                  'ราคา :',
+                                  'กลุ่มสินค้า : ',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(left: 10),
                                   padding: EdgeInsets.only(left: 5, right: 5),
-                                  height: 25,
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadiusDirectional.circular(5),
-                                      color: Colors.blue[300]),
-                                  child: Text(
-                                    '${product.price} บาท',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
+                                  child: Text('${product.groupName}'),
                                 )
-                              ],
+                              ]),
                             ),
-                          ),
-                          //ราคา
-                        ],
-                      ),
-                    )
-                  ],
+                            Container(
+                              margin: EdgeInsets.only(top: 3),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'สถานะ :',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  product.status == '0'
+                                      ? Container(
+                                          margin: EdgeInsets.only(left: 10),
+                                          padding:
+                                              EdgeInsets.only(left: 5, right: 5),
+                                          height: 25,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadiusDirectional.circular(
+                                                    5),
+                                            color: Colors.red[300],
+                                          ),
+                                          child: Text(
+                                            'หมด',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        )
+                                      : product.status == '2'
+                                          ? Container(
+                                              margin: EdgeInsets.only(left: 10),
+                                              padding: EdgeInsets.only(
+                                                  left: 5, right: 5),
+                                              height: 25,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadiusDirectional
+                                                          .circular(5),
+                                                  color: Colors.green[400]),
+                                              child: Text(
+                                                'แสดง',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          : Container(
+                                              margin: EdgeInsets.only(left: 10),
+                                              padding: EdgeInsets.only(
+                                                  left: 5, right: 5),
+                                              height: 25,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadiusDirectional
+                                                          .circular(5),
+                                                  color: Colors.grey[300]),
+                                              child: Text(
+                                                'ซ่อน',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )
+                                ],
+                              ),
+                            ),
+                            //สถานะ
+                            Container(
+                              margin: EdgeInsets.only(top: 3),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'ราคา :',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    height: 25,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadiusDirectional.circular(5),
+                                        color: Colors.blue[300]),
+                                    child: Text(
+                                      '${product.price} บาท',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            //ราคา
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               actions: [
@@ -311,6 +310,7 @@ class _PageAddProduct extends State {
   void initState() {
     if(futureProduct == null){
       loadProduct();
+
     }
     super.initState();
   }

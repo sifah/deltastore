@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:deltastore/api/order_api.dart';
 import 'package:deltastore/notification.dart';
 import 'package:deltastore/orders/detailOrder.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,11 +12,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../api/toJsonOrder.dart';
 import '../main_order.dart';
 
-dynamic token;
-
 // int current = 0,
 //     past = 0;
 int checkLoad = 1;
+
 class Order extends StatefulWidget {
   @override
   _OrderState createState() => _OrderState();
@@ -38,7 +38,6 @@ class _OrderState extends State<Order> {
 
   @override
   void initState() {
-    // TODO: implement initState
     databaseDataPay =
         firebaseDatabase.reference().child('${id}_${code}').child('data_pay');
     databaseOrders =
@@ -46,9 +45,11 @@ class _OrderState extends State<Order> {
     super.initState();
   }
 
+
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
+
     MyHomeApp().setFirebase();
     databaseDataPay.onValue.listen((event) {
       print('pay  ${event.snapshot.value}');
@@ -76,9 +77,6 @@ class _OrderState extends State<Order> {
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, index) {
                     Orders orders = snapshot.data[index];
-                    if( orders.status == '3'){
-                      showNotification('อัพเดตออร์เดอร์!', 'มีรายการออร์เดอร์มาใหม่');
-                    }
                     return Container(
                       child: Container(
                         margin: EdgeInsets.only(top: 5),
@@ -208,12 +206,12 @@ class _OrderState extends State<Order> {
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white)),
                                           Colors.blueGrey)
-                                          : orders.status == '4' 
+                                          : orders.status == '4'
                                           ? statusOrder(
                                           Text('กำลังจัดส่ง', style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white)),
-                                          Colors.green) 
+                                          Colors.green)
                                           : Padding(padding: EdgeInsets.zero)
                                     ],
                                   ),

@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import '../config.dart';
 import 'detailOrder.dart';
 
+
 class CancelBody extends StatefulWidget {
   String orderId;
 
@@ -73,29 +74,30 @@ class _CancelBodyState extends State<CancelBody> {
         context: context,
         //barrierDismissible: false,
         builder: (BuildContext context) => AlertDialog(
-              title: new Text(
-                'ยืนยันการลบ',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                title: new Text(
+                  'ยืนยันการลบ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                // content: new Text(
+                //   'คุณไม่สามารถยกเลิกออเดอร์ได้',
+                //   style: TextStyle(color: Colors.black45),
+                // ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('ปิดออก')),
+                  TextButton(
+                      onPressed: () {
+                        removeReason(reasonId);
+                      },
+                      child: Text('ยืนยัน'))
+                ],
               ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              // content: new Text(
-              //   'คุณไม่สามารถยกเลิกออเดอร์ได้',
-              //   style: TextStyle(color: Colors.black45),
-              // ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('ปิดออก')),
-                TextButton(
-                    onPressed: () {
-                      removeReason(reasonId);
-                    },
-                    child: Text('ยืนยัน'))
-              ],
-            ));
+        );
   }
 
   Future cancelOrder(String orderID, String adminID) async {
@@ -159,12 +161,12 @@ class _CancelBodyState extends State<CancelBody> {
     });
   }
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   loadData();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    loadData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

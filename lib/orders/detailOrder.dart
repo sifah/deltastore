@@ -33,14 +33,13 @@ class _DetailOrder extends State<DetailOrder> {
 
   _DetailOrder(this.data);
 
-
   int click = 0;
   int count = 0;
   var numRandom = new Random();
 
   void confirmOrders(String orderID, String adminID) {
     String params =
-    jsonEncode(<String, String>{'order_id': orderID, 'admin_id': adminID});
+        jsonEncode(<String, String>{'order_id': orderID, 'admin_id': adminID});
     http.post('${Config.API_URL}confirm_order', body: params).then((res) {
       print(res.body);
       if (res.body == '1') {
@@ -62,7 +61,7 @@ class _DetailOrder extends State<DetailOrder> {
 
   void sendOrders(String orderID, String adminID) {
     String params =
-    jsonEncode(<String, String>{'order_id': orderID, 'admin_id': adminID});
+        jsonEncode(<String, String>{'order_id': orderID, 'admin_id': adminID});
     http.post('${Config.API_URL}send_order', body: params).then((res) {
       print(res.body);
       if (res.body == '1') {
@@ -86,88 +85,96 @@ class _DetailOrder extends State<DetailOrder> {
     return showDialog(
         context: context,
         //barrierDismissible: false,
-        builder: (BuildContext context) =>
-            AlertDialog(
-              title: new Text(
-                'ยืนยันออเดอร์',
-                style: TextStyle(fontWeight: FontWeight.bold),
+        builder: (BuildContext context) => Center(
+          child: SingleChildScrollView(
+                child: AlertDialog(
+                  title: new Text(
+                    'ยืนยันออเดอร์',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  content: new Text(
+                    'คุณไม่สามารถยกเลิกออเดอร์ได้',
+                    style: TextStyle(color: Colors.black45),
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('ปิดออก')),
+                    TextButton(
+                        onPressed: () async {
+                          dynamic token = await FlutterSession().get('token');
+                          confirmOrders(orderId, token['data']['admin_id']);
+                          Navigator.pop(context);
+                        },
+                        child: Text('ยืนยัน'))
+                  ],
+                ),
               ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              content: new Text(
-                'คุณไม่สามารถยกเลิกออเดอร์ได้',
-                style: TextStyle(color: Colors.black45),
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('ปิดออก')),
-                TextButton(
-                    onPressed: () async {
-                      dynamic token = await FlutterSession().get('token');
-                      confirmOrders(orderId, token['data']['admin_id']);
-                      Navigator.pop(context);
-                    },
-                    child: Text('ยืนยัน'))
-              ],
-            ));
+        ));
   }
 
   Future<void> _alertPicPayment(DetailOrders ordersPay) async {
     return showDialog(
         context: context,
         //barrierDismissible: false,
-        builder: (BuildContext context) =>
-            AlertDialog(
-
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              content: Container(
-                child: Image.network(data.slip['img_url']),
+        builder: (BuildContext context) => Center(
+          child: SingleChildScrollView(
+                child: AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  content: Container(
+                    child: Image.network(data.slip['img_url']),
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('ปิดออก')),
+                  ],
+                ),
               ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('ปิดออก')),
-              ],
-            ));
+        ));
   }
 
   Future<void> _alertSend(orderId) async {
     return showDialog(
         context: context,
         //barrierDismissible: false,
-        builder: (BuildContext context) =>
-            AlertDialog(
-              // title: new Text(
-              //   'ยืนยันออเดอร์',
-              //   style: TextStyle(fontWeight: FontWeight.bold),
-              // ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              content: new Text(
-                'ทำอาหารเสร็จแล้วใช่หรือไม่?',
-                style: TextStyle(color: Colors.black45),
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('ไม่ใช่')),
-                TextButton(
-                    onPressed: () async {
-                      dynamic token = await FlutterSession().get('token');
-                      sendOrders(orderId, token['data']['admin_id']);
-                      Navigator.pop(context);
-                    },
-                    child: Text('ใช่'))
-              ],
-            ));
+        builder: (BuildContext context) => Center(
+          child: SingleChildScrollView(
+            child: AlertDialog(
+                  // title: new Text(
+                  //   'ยืนยันออเดอร์',
+                  //   style: TextStyle(fontWeight: FontWeight.bold),
+                  // ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  content: new Text(
+                    'ทำอาหารเสร็จแล้วใช่หรือไม่?',
+                    style: TextStyle(color: Colors.black45),
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('ไม่ใช่')),
+                    TextButton(
+                        onPressed: () async {
+                          dynamic token = await FlutterSession().get('token');
+                          sendOrders(orderId, token['data']['admin_id']);
+                          Navigator.pop(context);
+                        },
+                        child: Text('ใช่'))
+                  ],
+                ),
+          ),
+        ));
   }
 
   Future _alertCanCle(orderId) async {
@@ -176,21 +183,18 @@ class _DetailOrder extends State<DetailOrder> {
     return showDialog(
         context: context,
         //barrierDismissible: false,
-        builder: (BuildContext context) =>
-            AlertDialog(
-              contentPadding: EdgeInsets.zero,
-              title: new Text(
-                'ยืนยันยกเลิกออเดอร์',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              shape: RoundedRectangleBorder(
+        builder: (BuildContext context) => 
+            SingleChildScrollView(
+                child: AlertDialog(
+                  contentPadding: EdgeInsets.zero,
+                  title: new Text(
+                    'ยืนยันยกเลิกออเดอร์',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10))),
-              content: CancelBody(orderId),
-              // actions: [
-              //
-              //
-              // ],
-            ));
+                  content: CancelBody(orderId),
+            )));
   }
 
   // @override
@@ -240,7 +244,7 @@ class _DetailOrder extends State<DetailOrder> {
                                 CircleAvatar(
                                   radius: 25,
                                   backgroundImage:
-                                  NetworkImage(data.member.picUrl),
+                                      NetworkImage(data.member.picUrl),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(left: 10),
@@ -264,34 +268,33 @@ class _DetailOrder extends State<DetailOrder> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Flexible(
-                                  //alignment: Alignment.centerLeft,
+                                    //alignment: Alignment.centerLeft,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        Text(
-                                          'จัดส่ง: ${data.address.distance}'
-                                              '  ${data.address.duration}',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                          maxLines: 1,
-                                        ),
-                                        data.comment == null
-                                            ? Padding(padding: EdgeInsets.zero)
-                                            : Text(
-                                          '${data.comment}',
-                                          maxLines: 1,
-                                        ),
-                                        Text(
-                                          '${data.address.address}',
-                                          //maxLines: 2,
-                                          overflow: click == 1
-                                              ? null
-                                              : TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    )),
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'จัดส่ง: ${data.address.distance}'
+                                      '  ${data.address.duration}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                      maxLines: 1,
+                                    ),
+                                    data.comment == null
+                                        ? Padding(padding: EdgeInsets.zero)
+                                        : Text(
+                                            '${data.comment}',
+                                            maxLines: 1,
+                                          ),
+                                    Text(
+                                      '${data.address.address}',
+                                      //maxLines: 2,
+                                      overflow: click == 1
+                                          ? null
+                                          : TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                )),
                                 InkWell(
                                   onTap: () {
                                     if (count == 0) {
@@ -331,7 +334,7 @@ class _DetailOrder extends State<DetailOrder> {
                                       horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(
                                       borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
+                                          BorderRadius.all(Radius.circular(5)),
                                       color: data.memberGiveaway == '0'
                                           ? Colors.blueGrey
                                           : Colors.green[400]),
@@ -363,56 +366,56 @@ class _DetailOrder extends State<DetailOrder> {
                                 ),
                                 data.status == '2'
                                     ? Container(
-                                  margin: EdgeInsets.only(left: 10),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 5),
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(5),
-                                      color: Colors.green),
-                                  child: Text(
-                                    'ยืนยันแล้ว',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
-                                )
+                                        margin: EdgeInsets.only(left: 10),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 5),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: Colors.green),
+                                        child: Text(
+                                          'ยืนยันแล้ว',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                      )
                                     : data.status == '3'
-                                    ? Container(
-                                  margin: EdgeInsets.only(left: 10),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 3),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5)),
-                                      color: Colors.blueGrey),
-                                  child: Text(
-                                    'ยังไม่ยืนยัน',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                                    : data.status == '4'
-                                    ? Container(
-                                  margin:
-                                  EdgeInsets.only(left: 10),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 3),
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          5),
-                                      color: Colors.green),
-                                  child: Text(
-                                    'กำลังจัดส่ง',
-                                    style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
-                                )
-                                    : Padding(padding: EdgeInsets.zero)
+                                        ? Container(
+                                            margin: EdgeInsets.only(left: 10),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 3),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                                color: Colors.blueGrey),
+                                            child: Text(
+                                              'ยังไม่ยืนยัน',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          )
+                                        : data.status == '4'
+                                            ? Container(
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8, vertical: 3),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    color: Colors.green),
+                                                child: Text(
+                                                  'กำลังจัดส่ง',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                              )
+                                            : Padding(padding: EdgeInsets.zero)
                               ],
                             ),
                             Expanded(
@@ -428,7 +431,7 @@ class _DetailOrder extends State<DetailOrder> {
                               //width: double.maxFinite,
                               decoration: BoxDecoration(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                                      BorderRadius.all(Radius.circular(10)),
                                   color: data.paymentType == '0'
                                       ? Colors.red[400]
                                       : Colors.amber[400]),
@@ -448,38 +451,42 @@ class _DetailOrder extends State<DetailOrder> {
                               ),
                             ),
                             data.paymentType == "0"
-                                ? Padding(
-                                padding: EdgeInsets.zero)
-                                : Align( alignment: Alignment.center,
-                                  child: Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    height: MediaQuery.of(context).size.width-150,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      // color: Colors.blueGrey[50]
-                                    ),
-                                    child: InkWell(
-                                      onTap: () async{
-                                        _alertPicPayment(snapshot.data);
-                                        print('ggg');
-                                      },
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10)
+                                ? Padding(padding: EdgeInsets.zero)
+                                : Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      height:
+                                          MediaQuery.of(context).size.width -
+                                              150,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        // color: Colors.blueGrey[50]
+                                      ),
+                                      child: InkWell(
+                                        onTap: () async {
+                                          _alertPicPayment(snapshot.data);
+                                          print('ggg');
+                                        },
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: Image(
+                                            image: NetworkImage(
+                                                data.slip['img_url']),
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: Image(
-                                          image: NetworkImage(data.slip['img_url']),fit: BoxFit.cover,),
                                       ),
                                     ),
                                   ),
-                                ),
-
                             Container(
                               margin: EdgeInsets.only(top: 10),
                               decoration: BoxDecoration(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                                      BorderRadius.all(Radius.circular(10)),
                                   color: Colors.blueGrey[100],
                                   boxShadow: [
                                     BoxShadow(
@@ -490,13 +497,13 @@ class _DetailOrder extends State<DetailOrder> {
                                     )
                                   ]),
                               child: Container(
-                                //color: Colors.green[300],
+                                  //color: Colors.green[300],
                                   alignment: Alignment.center,
                                   //padding: EdgeInsets.all(10),
                                   child: Column(
                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Container(
@@ -506,15 +513,15 @@ class _DetailOrder extends State<DetailOrder> {
                                         //color: Colors.white24,
                                         child: ListView.builder(
                                             physics:
-                                            NeverScrollableScrollPhysics(),
+                                                NeverScrollableScrollPhysics(),
                                             itemCount: item.length,
                                             shrinkWrap: true,
                                             itemBuilder:
                                                 (BuildContext context, index) {
                                               Item dataItem = item[index];
                                               // Topping topping = dataItem.toppings as Topping;
-                                              String _comment = dataItem
-                                                  .comments;
+                                              String _comment =
+                                                  dataItem.comments;
                                               // int _price = int.parse(dataItem.price) ;
                                               //  String _count = dataItem.count;
                                               //  String sum = _count*_price;
@@ -524,26 +531,26 @@ class _DetailOrder extends State<DetailOrder> {
                                                     fontFamily: 'Kanit',
                                                     fontSize: 18,
                                                     fontWeight:
-                                                    FontWeight.bold),
+                                                        FontWeight.bold),
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment
-                                                          .spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
                                                         Flexible(
                                                             fit: FlexFit.tight,
                                                             child: Text(
-                                                              'x${dataItem
-                                                                  .count}   ${dataItem
-                                                                  .name.th}',
-                                                              overflow: TextOverflow
-                                                                  .ellipsis,
+                                                              'x${dataItem.count}   ${dataItem.name.th}',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             )),
-                                                        Text('${dataItem
-                                                            .price} บาท'),
+                                                        Text(
+                                                            '${dataItem.price} บาท'),
                                                       ],
                                                     ),
                                                     Container(
@@ -555,27 +562,28 @@ class _DetailOrder extends State<DetailOrder> {
                                                           ),
                                                           dataItem.html.isEmpty
                                                               ? Padding(
-                                                            padding: EdgeInsets
-                                                                .zero,
-                                                          )
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                )
                                                               : HtmlDetail(
-                                                              dataItem),
+                                                                  dataItem),
                                                           Container(
                                                             padding:
-                                                            EdgeInsets.only(
-                                                                left: 30),
+                                                                EdgeInsets.only(
+                                                                    left: 30),
                                                             child: Row(
                                                               children: [
                                                                 _comment.isEmpty
                                                                     ? Padding(
-                                                                    padding: EdgeInsets
-                                                                        .zero)
+                                                                        padding:
+                                                                            EdgeInsets.zero)
                                                                     : Text(
-                                                                  '${dataItem
-                                                                      .comments}',
-                                                                  style: TextStyle(
-                                                                      fontSize: 14),
-                                                                ),
+                                                                        '${dataItem.comments}',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                14),
+                                                                      ),
                                                               ],
                                                             ),
                                                           ),
@@ -605,36 +613,34 @@ class _DetailOrder extends State<DetailOrder> {
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.only(
                                                   bottomRight:
-                                                  Radius.circular(10),
+                                                      Radius.circular(10),
                                                   bottomLeft:
-                                                  Radius.circular(10)),
-                                              color: Colors.white.withOpacity(
-                                                  0.3),
+                                                      Radius.circular(10)),
+                                              color:
+                                                  Colors.white.withOpacity(0.3),
                                             ),
                                             child: Column(
                                               children: [
                                                 Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
                                                       Text('ค่าอาหารรวม :  '),
                                                       Text(
-                                                          '${data
-                                                              .priceFood} บาท '),
+                                                          '${data.priceFood} บาท '),
                                                     ]),
                                                 SizedBox(
                                                   height: 5,
                                                 ),
                                                 Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
                                                       Text('ค่าจัดส่ง :  '),
                                                       Text(
-                                                          '${data
-                                                              .priceSend} บาท ')
+                                                          '${data.priceSend} บาท ')
                                                     ]),
                                                 Expanded(
                                                     flex: 0,
@@ -644,8 +650,8 @@ class _DetailOrder extends State<DetailOrder> {
                                                     )),
                                                 Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Text('ราคารวม :  '),
                                                     Text(
@@ -680,104 +686,104 @@ class _DetailOrder extends State<DetailOrder> {
             //margin: EdgeInsets.all(10),
             child: data.status == '2'
                 ? Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.green),
-              child: TextButton(
-                child: Text(
-                  'เสร็จแล้ว',
-                  style: TextStyle(
-                      fontFamily: 'Kanit',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-                onPressed: () {
-                  _alertSend(data.orderId);
-                  print('ทำอาหารเสร็จแล้ว');
-                },
-              ),
-            )
-                : data.status == '3'
-                ? Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              width: double.maxFinite,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     decoration: BoxDecoration(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
                         color: Colors.green),
                     child: TextButton(
                       child: Text(
-                        'ยืนยัน',
+                        'เสร็จแล้ว',
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                      onPressed: () async {
-                        _alertConfirm(data.orderId);
-                        print("ยืนยันรับงาน");
-                      },
-                    ),
-                  ),
-                  Container(
-                    // width: 150,
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    decoration: BoxDecoration(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10)),
-                        color: Colors.red[500]),
-                    child: TextButton(
-                      child: Text(
-                        'ปฏิเสธ',
-                        style: TextStyle(
+                            fontFamily: 'Kanit',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),
                       onPressed: () {
-                        _alertCanCle(data.orderId).then((value) {
-                          if (changeOut == '1') {
-                            Navigator.pop(context);
-                          }
-                        });
-                        print('ไม่รับงาน');
+                        _alertSend(data.orderId);
+                        print('ทำอาหารเสร็จแล้ว');
                       },
                     ),
                   )
-                ],
-              ),
-            )
-                : data.status == '4'
-                ? Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.green,
-              ),
-              child: TextButton(
-                child: Text(
-                  'กำลังจัดส่ง',
-                  style: TextStyle(
-                      fontFamily: 'Kanit',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-                onPressed: () {
-                  _alertConfirm(data.orderId);
-                  print('กำลังจัดส่ง');
-                },
-              ),
-            )
-                : Padding(padding: EdgeInsets.zero),
+                : data.status == '3'
+                    ? Container(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        width: double.maxFinite,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 30),
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.green),
+                              child: TextButton(
+                                child: Text(
+                                  'ยืนยัน',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  _alertConfirm(data.orderId);
+                                  print("ยืนยันรับงาน");
+                                },
+                              ),
+                            ),
+                            Container(
+                              // width: 150,
+                              padding: EdgeInsets.symmetric(horizontal: 30),
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.red[500]),
+                              child: TextButton(
+                                child: Text(
+                                  'ปฏิเสธ',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                                onPressed: () {
+                                  _alertCanCle(data.orderId).then((value) {
+                                    if (changeOut == '1') {
+                                      Navigator.pop(context);
+                                    }
+                                  });
+                                  print('ไม่รับงาน');
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : data.status == '4'
+                        ? Container(
+                            padding: EdgeInsets.symmetric(horizontal: 30),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.green,
+                            ),
+                            child: TextButton(
+                              child: Text(
+                                'กำลังจัดส่ง',
+                                style: TextStyle(
+                                    fontFamily: 'Kanit',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              onPressed: () {
+                                _alertConfirm(data.orderId);
+                                print('กำลังจัดส่ง');
+                              },
+                            ),
+                          )
+                        : Padding(padding: EdgeInsets.zero),
           ),
         ],
       ),

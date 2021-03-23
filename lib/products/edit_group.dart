@@ -11,16 +11,16 @@ import 'package:http/http.dart' as http;
 import '../config.dart';
 import '../main_order.dart';
 
-class EditBody extends StatefulWidget {
+class EditGroup extends StatefulWidget {
   final GroupProduct groupProduct;
 
-  const EditBody({Key key, this.groupProduct}) : super(key: key);
+  const EditGroup({Key key, this.groupProduct}) : super(key: key);
 
   @override
-  _EditBodyState createState() => _EditBodyState();
+  _EditGroupState createState() => _EditGroupState();
 }
 
-class _EditBodyState extends State<EditBody> {
+class _EditGroupState extends State<EditGroup> {
   final _groupName = TextEditingController();
   List<String> _listStatus = ['หมด', 'ซ่อน', 'แสดง'];
   String selectValue, dropDownValue;
@@ -82,9 +82,6 @@ class _EditBodyState extends State<EditBody> {
                   decoration: new InputDecoration(
                       hintText: 'ชื่อกลุ่มสินค้า',
                       hintStyle: TextStyle(fontSize: 14)),
-                  // onChanged: (value) {
-                  //   print(value);
-                  // },
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10, bottom: 5),
@@ -109,48 +106,6 @@ class _EditBodyState extends State<EditBody> {
                           });
                         },
                       )
-                      //     Row(
-                      //       children: [
-                      //         Radio(
-                      //             value: '0',
-                      //             groupValue: selectValue,
-                      //             onChanged: (value) {
-                      //               print(value);
-                      //               setState(() {
-                      //                 selectValue = value;
-                      //               });
-                      //             }),
-                      //         Text(_listStatus[0])
-                      //       ],
-                      //     ),
-                      //     Row(
-                      //       children: [
-                      //         Radio(
-                      //             value: '1',
-                      //             groupValue: selectValue,
-                      //             onChanged: (value) {
-                      //               print(value);
-                      //               setState(() {
-                      //                 selectValue = value;
-                      //               });
-                      //             }),
-                      //         Text(_listStatus[1])
-                      //       ],
-                      //     ),
-                      //     Row(
-                      //       children: [
-                      //         Radio(
-                      //             value: '2',
-                      //             groupValue: selectValue,
-                      //             onChanged: (value) {
-                      //               print(value);
-                      //               setState(() {
-                      //                 selectValue = value;
-                      //               });
-                      //             }),
-                      //         Text(_listStatus[2])
-                      //       ],
-                      //     )
                     ],
                   ),
                 ),

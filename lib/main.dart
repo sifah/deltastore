@@ -7,13 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_session/flutter_session.dart';
 
+import 'notification.dart';
+
+Map<String, dynamic> deviceData = <String, dynamic>{};
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initFirebaseMessaging();
   dynamic token = await FlutterSession().get('token');
   if(token == null){
     token = '';
+  }else if(token != ''){
+    MyHomeApp().setFirebase();
+    loadInfo();
   }
-  print(token);
+  // print(token);
   runApp(MaterialApp(
     home: token == '' ? MyApp() : MyHomeApp(),
     theme: ThemeData(fontFamily: 'Kanit'),
@@ -32,9 +40,19 @@ class _MyApp extends State<MyApp> {
   TextEditingController _pass = TextEditingController();
   bool _isLoginOk = true;
 
+
+
   Future<void> clickLogin() async {
     String params = jsonEncode(
-        <String, String>{'username': _user.text, 'password': _pass.text});
+        <String, String>{
+          'username': _user.text,
+          'password': _pass.text,
+          'uuid': deviceData['uuid'],
+          'platform': deviceData['platform'],
+          'token': deviceData['token'],
+          'version':deviceData['version'],
+        });
+    print(params);
 
     await http.post('${Config.API_URL}login', body: params).then((res) async {
       print(res.body);
@@ -58,6 +76,16 @@ class _MyApp extends State<MyApp> {
         });
       }
     });
+  }
+
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    loadInfo();
+    super.initState();
   }
 
   @override
@@ -170,3 +198,4 @@ class _MyApp extends State<MyApp> {
         );
   }
 }
+

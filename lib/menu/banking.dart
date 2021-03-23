@@ -37,23 +37,27 @@ class _BankMenu extends State {
         barrierDismissible: false,
         // dialog is dismissible with a tap on the barrier
         builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 1),
-            title: Text(
-              'การชำระเงิน',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          return Center(
+            child: SingleChildScrollView(
+              child: AlertDialog(
+                contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 1),
+                title: Text(
+                  'การชำระเงิน',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                content: EditBank(
+                  payments: payments,
+                ),
+                //actions: [],
+              ),
             ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            content: EditBank(
-              payments: payments,
-            ),
-            //actions: [],
           );
         });
   }
 
-  Future<void> _alertPicQr(Payments payments) async {
+  Future<void> _showPicQr(Payments payments) async {
     return showDialog(
         context: context,
         //barrierDismissible: false,
@@ -176,10 +180,10 @@ class _BankMenu extends State {
                         InkWell(
                           onTap: payments.type2Options == ""
                               ? (){
-                            print('aaa');
+                            print('no pic QR payment');
                           }
                               : () async {
-                            _alertPicQr(snapshot.data[index]);
+                            _showPicQr(snapshot.data[index]);
                             },
                           child: Card(
                             margin: EdgeInsets.all(5),

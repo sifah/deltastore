@@ -34,7 +34,7 @@ class _EditEmployeeState extends State<EditEmployee> {
   TextEditingController _tel = TextEditingController();
 
   final _formkey = GlobalKey<FormState>();
-  String showImage, showName, idAdmin = '0', base64Image;
+  String showImage, showName, idAdmin = '0', base64Image ='';
 
   bool checkEmployeeEdit = true, check = false;
   final picker = ImagePicker();
@@ -76,7 +76,7 @@ class _EditEmployeeState extends State<EditEmployee> {
     print(text);
   }
 
-  void onSubmit({String idAdmin = '0', String idRes, String photo = ''}) {
+  void onSubmit() {
     String params;
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
@@ -89,8 +89,8 @@ class _EditEmployeeState extends State<EditEmployee> {
         'password': _password.text,
         'tel': _tel.text,
         'email': _email.text,
-        'pro_file_url': photo,
-        'id_res_auto': idRes
+        'pro_file_url': base64Image,
+        'id_res_auto': token['data']['id_res_auto']
       });
     }
     if (_name.text.isNotEmpty &&
@@ -105,8 +105,8 @@ class _EditEmployeeState extends State<EditEmployee> {
           'password': _password.text,
           'tel': _tel.text,
           'email': _email.text,
-          'pro_file_url': photo,
-          'id_res_auto': idRes
+          'pro_file_url': base64Image,
+          'id_res_auto': token['data']['id_res_auto']
         });
       }
     }
@@ -187,7 +187,7 @@ class _EditEmployeeState extends State<EditEmployee> {
                                   ? Image.file(_filePhoto)
                                   : Align(
                                       alignment: Alignment.center,
-                                      child: Text('เลือกรูปภาพ'),
+                                      child: Text('กรุณาเพิ่มรูปภาพ'),
                                     )
                               : Image.network(
                                   showImage,
@@ -314,6 +314,7 @@ class _EditEmployeeState extends State<EditEmployee> {
               color: Colors.green,
               onPressed: (){
                 print('บันทึกข้อมูล');
+                onSubmit();
               },
               child: Text('บันทึก',style: TextStyle(
                   fontSize: 18,

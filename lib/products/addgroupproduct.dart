@@ -10,7 +10,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../config.dart';
 import '../main_order.dart';
-import 'edit_store_body.dart';
+import 'edit_group.dart';
 
 class PageAddGroupProduct extends StatefulWidget {
   @override
@@ -27,24 +27,29 @@ class _PageAddGroupProduct extends State {
     });
   }
 
-  Future _addProduct({GroupProduct groupProduct}) {
+  Future _showGroupProduct({GroupProduct groupProduct}) {
     return showDialog(
         context: context,
         barrierDismissible: false,
         // dialog is dismissible with a tap on the barrier
         builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              'กลุ่มสินค้า',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          return  Center(
+            child: SingleChildScrollView(
+              child: AlertDialog(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    'กลุ่มสินค้า',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  content:  EditGroup(
+                      groupProduct: groupProduct,
+                    ),
+                ),
             ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            content: EditBody(
-              groupProduct: groupProduct,
-            ),
-          );
+          )
+          ;
         });
   }
 
@@ -159,7 +164,7 @@ class _PageAddGroupProduct extends State {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           onPressed: () {
-                                            _addProduct(
+                                            _showGroupProduct(
                                                 groupProduct:
                                                     snapshot.data[index]).whenComplete(() => loadGroup());
 
@@ -202,7 +207,7 @@ class _PageAddGroupProduct extends State {
               })),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          _addProduct().whenComplete(() => loadGroup());
+          _showGroupProduct().whenComplete(() => loadGroup());
           showToastBottom(text: 'บันทึกสำเร็จ');
         },
         child: Icon(Icons.add),

@@ -1,15 +1,11 @@
 import 'dart:io';
-
+import 'package:deltastore/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-
 
 class SelectPhoto extends StatefulWidget {
   @override
@@ -71,16 +67,15 @@ class _SelectPhotoState extends State<SelectPhoto> {
   void uploadPhoto() async {
     print('upload');
     images.forEach((element) async {
-      final response = await http.post(
-        urlUpload,
-        body: '',
-      );
-
-      final responseJson = json.decode(response.body);
-
-      print(responseJson);
+      List<int> imageBytes = element.readAsBytesSync();
+      String fileName = element.path.split(".").last;
+      var base64Image = '$fileName;${base64Encode(imageBytes)}';
+      print(base64Image);
+      await http.post('${Config.API_URL}upload_picture',
+          body: 'ddd').then((value) {
+        print(value.body);
+      });
     });
-
   }
 
   @override
@@ -95,49 +90,49 @@ class _SelectPhotoState extends State<SelectPhoto> {
         children: [
           images.isEmpty
               ? Center(
-            child: Text('โปรดเลือกรูปภาพ'),
-          )
+                  child: Text('โปรดเลือกรูปภาพ'),
+                )
               : Container(
-            child: GridView.builder(
-                padding: EdgeInsets.only(top: 20),
-                shrinkWrap: true,
-                itemCount: images.length,
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    mainAxisSpacing: 15,
-                    childAspectRatio: 1.3,
-                    maxCrossAxisExtent: 300),
-                itemBuilder: (context, i) {
-                  return Image.file(images[i]
-                    // height: 300,
-                    // width: MediaQuery.of(context).size.width.toInt()
-                  );
-                }),
-          ),
+                  child: GridView.builder(
+                      padding: EdgeInsets.only(top: 20),
+                      shrinkWrap: true,
+                      itemCount: images.length,
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 1.3,
+                          maxCrossAxisExtent: 300),
+                      itemBuilder: (context, i) {
+                        return Image.file(images[i]
+                            // height: 300,
+                            // width: MediaQuery.of(context).size.width.toInt()
+                            );
+                      }),
+                ),
           images.isEmpty
               ? Container()
               : Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: EdgeInsets.only(bottom: 20),
-              child: RaisedButton(
-                textColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7))),
-                color: Colors.blue,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.upload_outlined),
-                    Text(
-                      'อัพโหลด',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )
-                  ],
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: RaisedButton(
+                      textColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7))),
+                      color: Colors.blue,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.upload_outlined),
+                          Text(
+                            'อัพโหลด',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                      onPressed: uploadPhoto,
+                    ),
+                  ),
                 ),
-                onPressed: uploadPhoto,
-              ),
-            ),
-          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

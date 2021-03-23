@@ -143,10 +143,6 @@ class _Shipment extends State {
       appBar: AppBar(
         title: Text('การจัดส่ง'),
         backgroundColor: Color.fromRGBO(43, 108, 171, 1),
-        // actions: [
-        //   IconButton(
-        //       icon: Icon(Icons.exit_to_app_outlined), onPressed: onLogOut)
-        // ],
         bottom: PreferredSize(
           preferredSize: Size(50, 50),
           child: Container(
@@ -192,7 +188,7 @@ class _Shipment extends State {
             return Container(
               padding: EdgeInsets.all(5),
               child: ListView.builder(
-                  itemCount: listData.length + 1,
+                  itemCount: listData.length < 1 ? 0 : listData.length + 1,
                   itemBuilder: (BuildContext context, index) {
                     if (index < listData.length) {
                       Datum datum = listData[index];
@@ -209,6 +205,7 @@ class _Shipment extends State {
                           price: '${datum.price}',
                           index: index);
                     }
+
                     Datum last = listData[listData.length - 1];
                     return cardPrice(
                         text: 'มากกว่า ${last.number} กม เป็นต้นไป');
@@ -228,20 +225,6 @@ class _Shipment extends State {
         },
         child: Icon(Icons.add),
       ),
-      // bottomNavigationBar: Container(
-      //   height: 55,
-      //   color: Colors.green,
-      //   child: TextButton(
-      //     onPressed: () {
-      //       print('บัททึก');
-      //     },
-      //     child: Text(
-      //       'บันทึก',
-      //       style: TextStyle(
-      //           fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-      //     ),
-      //   ),
-      // ),
     );
   }
 
@@ -251,81 +234,85 @@ class _Shipment extends State {
         barrierDismissible: false,
         // dialog is dismissible with a tap on the barrier
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              'เพิ่มระยะทาง',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            content: Form(
-              key: _formKey,
-              child: Container(
-                //width: 230,
-                //height: 100,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    new TextFormField(
-                      autofocus: true,
-                      keyboardType: TextInputType.number,
-                      controller: _distance,
-                      decoration: new InputDecoration(
-                          hintText: 'ระยะทางน้อยกว่า',
-                          hintStyle: TextStyle(fontSize: 14)),
-                      // onChanged: (value) {
-                      //   distance = value;
-                      // },
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return 'กรอกระยะทาง';
-                        }
-                        return null;
-                      },
+          return Center(
+            child: SingleChildScrollView(
+              child: AlertDialog(
+                title: Text(
+                  'เพิ่มระยะทาง',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                content: Form(
+                  key: _formKey,
+                  child: Container(
+                    //width: 230,
+                    //height: 100,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        new TextFormField(
+                          autofocus: true,
+                          keyboardType: TextInputType.number,
+                          controller: _distance,
+                          decoration: new InputDecoration(
+                              hintText: 'ระยะทางน้อยกว่า',
+                              hintStyle: TextStyle(fontSize: 14)),
+                          // onChanged: (value) {
+                          //   distance = value;
+                          // },
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'กรอกระยะทาง';
+                            }
+                            return null;
+                          },
+                        ),
+                        new TextFormField(
+                          autofocus: true,
+                          keyboardType: TextInputType.number,
+                          controller: _shippingCost,
+                          decoration: new InputDecoration(
+                              hintText: 'ค่าจัดส่ง',
+                              hintStyle: TextStyle(fontSize: 14)),
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'กรอกค่าจัดส่ง';
+                            }
+                            return null;
+                          },
+                        )
+                      ],
                     ),
-                    new TextFormField(
-                      autofocus: true,
-                      keyboardType: TextInputType.number,
-                      controller: _shippingCost,
-                      decoration: new InputDecoration(
-                          hintText: 'ค่าจัดส่ง',
-                          hintStyle: TextStyle(fontSize: 14)),
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return 'กรอกค่าจัดส่ง';
-                        }
-                        return null;
-                      },
-                    )
-                  ],
+                  ),
                 ),
+                actions: [
+                  FlatButton(
+                    child: Text('ยกเลิก'),
+                    //color: Colors.red,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      'บันทึก',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    //color: Colors.blue,
+                    onPressed: () {
+                      onSubmit().then((value) {
+                        if (_formKey.currentState.validate()) {
+                          Timer(Duration(seconds: 2), () {
+                            Navigator.of(context).pop();
+                          });
+                        }
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
-            actions: [
-              FlatButton(
-                child: Text('ยกเลิก'),
-                //color: Colors.red,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child: Text(
-                  'บันทึก',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                //color: Colors.blue,
-                onPressed: () {
-                  onSubmit().then((value) {
-                    if (_formKey.currentState.validate()) {
-                      Timer(Duration(seconds: 2), () {
-                        Navigator.of(context).pop();
-                      });
-                    }
-                  });
-                },
-              ),
-            ],
           );
         });
   }
@@ -357,45 +344,27 @@ class _Shipment extends State {
               price.isEmpty
                   ? Container()
                   : Container(
-                child: SizedBox(
-                  height: 35,
-                  width: 45,
-                  child: RawMaterialButton(
-                    fillColor: Colors.red[300],
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(10))),
-                    child: const Text('ลบ',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
-                    onPressed: () {
-                      alertRemove(index).whenComplete(() => loadDistance());
-                      print('delete');
-                    },
-                  ),
-                ),
-              )
-              // Container(
-              //         height: 35,
-              //         width: 45,
-              //         decoration: BoxDecoration(
-              //           borderRadius: BorderRadius.all(Radius.circular(5)),
-              //           border: Border.all(color: Colors.red),
-              //         ),
-              //         child: TextButton(
-              //           onPressed: () {
-              //             alertRemove(index).whenComplete(() => loadDistance());
-              //             print('ลบ');
-              //           },
-              //           child: Text(
-              //             'ลบ',
-              //             style: TextStyle(
-              //                 fontWeight: FontWeight.bold, color: Colors.red),
-              //           ),
-              //         ),
-              //       )
+                      child: SizedBox(
+                        height: 35,
+                        width: 45,
+                        child: RawMaterialButton(
+                          fillColor: Colors.red[300],
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: const Text('ลบ',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                          onPressed: () {
+                            alertRemove(index)
+                                .whenComplete(() => loadDistance());
+                            print('delete');
+                          },
+                        ),
+                      ),
+                    )
             ],
           ),
         ),
@@ -404,88 +373,3 @@ class _Shipment extends State {
     );
   }
 }
-
-//Column(
-//children: [
-// DropdownButtonFormField(
-//   decoration: InputDecoration(
-//       labelText: 'รูปแบบการจัดส่ง',
-//       labelStyle: TextStyle(color: Colors.black),
-//       contentPadding: EdgeInsets.all(10)),
-//   value: distanceValue,
-//   validator: (value) =>
-//   value == null ? 'กรุณาเลือกรูปแบบระยะทาง' : null,
-//   onChanged: (String newValue) {
-//     // This set state is trowing an error
-//     setState(() {
-//       distanceValue = newValue;
-//     });
-//   },
-//   items: <String>[
-//     'ตามระยะทาง',
-//     'ตามจำนวน',
-//     'ตามราคารวม',
-//   ].map<DropdownMenuItem<String>>((String value) {
-//     return DropdownMenuItem<String>(
-//       value: value,
-//       child: new Text(value),
-//       onTap: () {},
-//     );
-//   }).toList(),
-// ),
-
-// Container(
-//   padding: EdgeInsets.all(5),
-//   height: 75,
-//   width: double.maxFinite,
-//   child: Card(
-//     child: Container(
-//       padding: EdgeInsets.only(left: 10, right: 10),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Text('มากกว่าระยะทาง'),
-//           Container(
-//             height: 35,
-//             width: 45,
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.all(Radius.circular(5)),
-//               border: Border.all(color: Colors.red),
-//             ),
-//             child: TextButton(
-//               onPressed: () {
-//                 print('ลบ');
-//               },
-//               child: Text(
-//                 'ลบ',
-//                 style: TextStyle(
-//                     fontWeight: FontWeight.bold, color: Colors.red),
-//               ),
-//             ),
-//           )
-//         ],
-//       ),
-//       //child: ค่าระยะทางที่รับมา>ค่าแรก ? Text(' ${ระยะทาง} กม. หรือน้อยกว่า ${ราคา} บาท')
-//       //: Text('มากกว่า ${ระยะทาง} - ${ระยะทาง} กม. ${ราคา} บาท')
-//     ),
-//     elevation: 2,
-//   ),
-// ),
-//   RaisedButton(
-//     onPressed: () async {
-//       final String addDistance =
-//           await _asyncInputDialog(context);
-//     },
-//     color: Colors.blue,
-//     shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadiusDirectional.circular(5)),
-//     child: Text(
-//       'เพิ่ม',
-//       style: TextStyle(
-//           fontSize: 18,
-//           fontWeight: FontWeight.bold,
-//           color: Colors.white),
-//     ),
-//   )
-// ],
-// ),
