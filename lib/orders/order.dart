@@ -12,10 +12,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../api/toJsonOrder.dart';
 import '../main_order.dart';
 
-// int current = 0,
-//     past = 0;
-int checkLoad = 1;
-
+List listOrder;
 class Order extends StatefulWidget {
   @override
   _OrderState createState() => _OrderState();
@@ -23,18 +20,7 @@ class Order extends StatefulWidget {
 
 class _OrderState extends State<Order> {
 
-  List _loadOrder;
 
-  // void loadOrder(Orders orders) async{
-  //   final load = await fetchOrders();
-  //   setState(() {
-  //     _loadOrder = load;
-  //     if (orders.status == '1' ){
-  //       showNotification('อัพเดตออร์เดอร์!', 'มีรายการออร์เดอร์มาใหม่');
-  //     }
-  //     print(load);
-  //   });
-  // }
 
   @override
   void initState() {
@@ -47,15 +33,15 @@ class _OrderState extends State<Order> {
 
 
   @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-
-    MyHomeApp().setFirebase();
-    databaseDataPay.onValue.listen((event) {
-      print('pay  ${event.snapshot.value}');
-    });
-    super.didChangeDependencies();
-  }
+  // void didChangeDependencies() {
+  //   // TODO: implement didChangeDependencies
+  //
+  //   MyHomeApp().setFirebase();
+  //   databaseDataPay.onValue.listen((event) {
+  //     print('pay  ${event.snapshot.value}');
+  //   });
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {

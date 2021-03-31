@@ -22,7 +22,7 @@ class PageAddProduct extends StatefulWidget {
 }
 
 class _PageAddProduct extends State {
-  // Future _futureProduct;
+
   bool loading = false;
   String _loadPhoto;
 

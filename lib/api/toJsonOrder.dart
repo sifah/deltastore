@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final orders = ordersFromJson(jsonString);
+
 import 'dart:convert';
 
 List<Orders> ordersFromJson(String str) => List<Orders>.from(json.decode(str).map((x) => Orders.fromJson(x)));
@@ -27,8 +31,8 @@ class Orders {
 
   String orderId;
   String memberId;
-  String timeStart;
-  dynamic comment;
+  DateTime timeStart;
+  String comment;
   String status;
   String paymentType;
   String sumPrice;
@@ -46,8 +50,8 @@ class Orders {
   factory Orders.fromJson(Map<String, dynamic> json) => Orders(
     orderId: json["order_id"],
     memberId: json["member_id"],
-    timeStart: json["time_start"],
-    comment: json["comment"],
+    timeStart: DateTime.parse(json["time_start"]),
+    comment: json["comment"] == null ? null : json["comment"],
     status: json["status"],
     paymentType: json["payment_type"],
     sumPrice: json["sum_price"],
@@ -66,8 +70,8 @@ class Orders {
   Map<String, dynamic> toJson() => {
     "order_id": orderId,
     "member_id": memberId,
-    "time_start": timeStart,
-    "comment": comment,
+    "time_start": timeStart.toIso8601String(),
+    "comment": comment == null ? null : comment,
     "status": status,
     "payment_type": paymentType,
     "sum_price": sumPrice,
@@ -92,8 +96,8 @@ class Address {
   });
 
   String address;
-  String distance;
-  String duration;
+  dynamic distance;
+  dynamic duration;
 
   factory Address.fromJson(Map<String, dynamic> json) => Address(
     address: json["address"],
@@ -160,8 +164,8 @@ class MemberLatLong {
   };
 }
 
-class SlipClass {
-  SlipClass({
+class SlipClassOrder {
+  SlipClassOrder({
     this.idSlip,
     this.imgUrl,
     this.amount,
@@ -173,7 +177,7 @@ class SlipClass {
   String amount;
   String success;
 
-  factory SlipClass.fromJson(Map<String, dynamic> json) => SlipClass(
+  factory SlipClassOrder.fromJson(Map<String, dynamic> json) => SlipClassOrder(
     idSlip: json["id_slip"],
     imgUrl: json["img_url"],
     amount: json["amount"],
